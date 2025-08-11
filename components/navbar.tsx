@@ -10,6 +10,9 @@ export function Navbar() {
           <a href="/data" className="text-sm font-medium hover:underline">
             Dados
           </a>
+          <a href="/map" className="text-sm font-medium hover:underline">
+            Mapa
+          </a>
           <a href="/info" className="text-sm font-medium hover:underline">
             Sobre
           </a>

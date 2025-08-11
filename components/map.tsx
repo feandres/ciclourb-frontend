@@ -137,7 +137,7 @@ export function MapView({ geojsonData }: Props) {
   }
 
   return (
-    <div className="relative h-[500px] w-full">
+    <div className="relative w-full h-[calc(100vh-8rem)]">
       <div ref={mapContainer} className="h-full w-full" />
 
       <div className="absolute top-4 left-4 z-10 bg-white rounded-lg shadow p-3 space-y-2">

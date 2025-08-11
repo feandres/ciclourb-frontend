@@ -1,32 +1,14 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { MapView } from "@/components/map";
 import { Indicators } from "@/components/indicators";
 import { ChartsSection } from "@/components/charts";
 
 export default function DataPage() {
-  const [geojsonData, setGeojsonData] = useState<Record<string, any> | null>(
-    null
-  );
-
-  useEffect(() => {
-    fetch("http://localhost:3001")
-      .then((res) => res.json())
-      .then((data) => setGeojsonData(data))
-      .catch((error) => {
-        console.error("Erro ao buscar geojson:", error);
-      });
-  }, []);
 
   return (
     <div className="flex flex-col">
 
       <Indicators />
-
-      <section className="py-6 container mx-auto px-4">
-        {geojsonData && <MapView geojsonData={geojsonData} />}
-      </section>
 
       <ChartsSection />
 
