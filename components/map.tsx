@@ -2,10 +2,11 @@
 
 import { useEffect, useRef, useState } from "react";
 import maplibregl, { Map } from "maplibre-gl";
+import type { FeatureCollection, Geometry, GeoJsonProperties } from "geojson";
 import "maplibre-gl/dist/maplibre-gl.css";
 
 interface Props {
-  geojsonData: Record<string, any>;
+  geojsonData: FeatureCollection<Geometry, GeoJsonProperties>;
 }
 
 export function MapView({ geojsonData }: Props) {
@@ -13,25 +14,14 @@ export function MapView({ geojsonData }: Props) {
   const mapRef = useRef<Map | null>(null);
   const [baseLayer, setBaseLayer] = useState<"raster" | "vector">("raster");
   const [mapLoaded, setMapLoaded] = useState(false);
-
-  const layerColors: Record<string, string> = {
-    CONTIDO_GEOJSON: "#1f77b4",
-    EXECUTADO_GEOJSON: "#2ca02c",
-    EXISTENTE_GEOJSON: "#ff7f0e",
-    NAOCONTIDO_GEOJSON: "#d62728",
-    NAOEXECUTADO_GEOJSON: "#9467bd",
-  };
+  const [visible, setVisible] = useState(true);
 
   useEffect(() => {
     if (mapRef.current || !mapContainer.current) return;
 
     const map = new maplibregl.Map({
       container: mapContainer.current,
-      style: {
-        version: 8,
-        sources: {},
-        layers: [],
-      },
+      style: { version: 8, sources: {}, layers: [] },
       center: [-38.5263, -3.7418],
       zoom: 13,
     });
@@ -48,7 +38,6 @@ export function MapView({ geojsonData }: Props) {
         ],
         tileSize: 256,
       });
-
       map.addLayer({
         id: "raster-layer",
         type: "raster",
@@ -61,7 +50,6 @@ export function MapView({ geojsonData }: Props) {
         tiles: ["https://tile.openstreetmap.org/{z}/{x}/{y}.png"],
         tileSize: 256,
       });
-
       map.addLayer({
         id: "vector-layer",
         type: "raster",
@@ -69,18 +57,19 @@ export function MapView({ geojsonData }: Props) {
         layout: { visibility: baseLayer === "vector" ? "visible" : "none" },
       });
 
-      Object.entries(geojsonData).forEach(([key, data]) => {
-        map.addSource(key, { type: "geojson", data });
+      map.addSource("vias", {
+        type: "geojson",
+        data: geojsonData,
+      });
 
-        map.addLayer({
-          id: key,
-          type: "line",
-          source: key,
-          paint: {
-            "line-color": layerColors[key] || "#000",
-            "line-width": 3,
-          },
-        });
+      map.addLayer({
+        id: "vias",
+        type: "line",
+        source: "vias",
+        paint: {
+          "line-color": "#ff0000",
+          "line-width": 3,
+        },
       });
     });
 
@@ -99,7 +88,6 @@ export function MapView({ geojsonData }: Props) {
       "visibility",
       baseLayer === "raster" ? "visible" : "none"
     );
-
     mapRef.current.setLayoutProperty(
       "vector-layer",
       "visibility",
@@ -107,34 +95,17 @@ export function MapView({ geojsonData }: Props) {
     );
   }, [baseLayer, mapLoaded]);
 
-  const [visibleLayers, setVisibleLayers] = useState<Record<string, boolean>>(
-    () => {
-      const allVisible: Record<string, boolean> = {};
-      Object.keys(geojsonData).forEach((key) => (allVisible[key] = true));
-      return allVisible;
-    }
-  );
-
   useEffect(() => {
     if (!mapRef.current || !mapLoaded) return;
 
-    Object.entries(visibleLayers).forEach(([layerId, isVisible]) => {
-      if (mapRef.current!.getLayer(layerId)) {
-        mapRef.current!.setLayoutProperty(
-          layerId,
-          "visibility",
-          isVisible ? "visible" : "none"
-        );
-      }
-    });
-  }, [visibleLayers, mapLoaded]);
-
-  function toggleLayer(layerId: string) {
-    setVisibleLayers((prev) => ({
-      ...prev,
-      [layerId]: !prev[layerId],
-    }));
-  }
+    if (mapRef.current.getLayer("vias")) {
+      mapRef.current.setLayoutProperty(
+        "vias",
+        "visibility",
+        visible ? "visible" : "none"
+      );
+    }
+  }, [visible, mapLoaded]);
 
   return (
     <div className="relative w-full h-[calc(100vh-8rem)]">
@@ -150,22 +121,15 @@ export function MapView({ geojsonData }: Props) {
           {baseLayer === "raster" ? "Vetorial" : "Satélite"}
         </button>
 
-        <div>
-          {Object.entries(layerColors).map(([layerId, color]) => (
-            <label key={layerId} className="flex items-center gap-2">
-              <input
-                type="checkbox"
-                checked={visibleLayers[layerId]}
-                onChange={() => toggleLayer(layerId)}
-              />
-              <span
-                className="inline-block w-5 h-3 rounded"
-                style={{ backgroundColor: color }}
-              />
-              <span className="text-sm">{layerId}</span>
-            </label>
-          ))}
-        </div>
+        <label className="flex items-center gap-2">
+          <input
+            type="checkbox"
+            checked={visible}
+            onChange={() => setVisible((prev) => !prev)}
+          />
+          <span className="inline-block w-5 h-3 rounded bg-red-500" />
+          <span className="text-sm">Vias</span>
+        </label>
       </div>
     </div>
   );
