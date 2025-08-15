@@ -9,7 +9,7 @@ export function Footer() {
           <a href="#">Privacidade</a>
           <a href="#">Termos</a>
           <a href="#">Github</a>
-          <a href="#">Instagram</a>
+          <a href="https://www.instagram.com/ciclourb/">Instagram</a>
         </div>
       </div>
     </footer>

@@ -1,26 +1,32 @@
 import { Hero } from "@/components/hero";
 
 export default function HomePage() {
-  const mockArticles = [
-    { title: "Artigo 1", description: "Descrição do artigo 1." },
-    { title: "Artigo 2", description: "Descrição do artigo 2." },
-    { title: "Artigo 3", description: "Descrição do artigo 3." },
-  ];
-
   return (
     <>
       <Hero />
 
-      <section className="container mx-auto py-12 px-4 grid gap-8 sm:grid-cols-2 md:grid-cols-3">
-        {mockArticles.map((article, idx) => (
-          <article
-            key={idx}
-            className="rounded-lg border p-6 shadow-sm hover:shadow-md transition"
-          >
-            <h2 className="text-xl font-semibold">{article.title}</h2>
-            <p className="mt-2 text-gray-600">{article.description}</p>
-          </article>
-        ))}
+      <section className="container mx-auto py-12 px-4">
+        <div className="max-w-3xl mx-auto text-justify leading-relaxed">
+          <h2 className="text-2xl font-bold mb-4">Seção 1</h2>
+          <p className="text-gray-700">
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed
+            euismod, ipsum a aliquam eleifend, justo nisi placerat libero, et
+            porttitor nibh nulla in magna. Cras sed orci ac nunc egestas
+            pretium. Vivamus a feugiat est, et viverra ligula.
+          </p>
+        </div>
+      </section>
+
+      <section className="container mx-auto py-12 px-4">
+        <div className="max-w-3xl mx-auto text-justify leading-relaxed">
+          <h2 className="text-2xl font-bold mb-4">Seção 2</h2>
+          <p className="text-gray-700">
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed
+            euismod, ipsum a aliquam eleifend, justo nisi placerat libero, et
+            porttitor nibh nulla in magna. Cras sed orci ac nunc egestas
+            pretium. Vivamus a feugiat est, et viverra ligula.
+          </p>
+        </div>
       </section>
     </>
   );

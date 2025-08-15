@@ -1,35 +1,116 @@
+import Image from "next/image";
+import { FaGithub, FaInstagram, FaLinkedin } from "react-icons/fa";
+
 export default function SobreNosPage() {
+  const equipe = [
+    {
+      nome: "Mateus Barboza",
+      cargo: "Arquiteto e Urbanista",
+      foto: "/mateus.png",
+      redes: [
+        { icone: <FaInstagram />, url: "https://instagram.com" },
+        { icone: <FaLinkedin />, url: "https://linkedin.com" },
+      ],
+    },
+    {
+      nome: "Beatriz",
+      cargo: "Arquiteta e Urbanista",
+      foto: "/beatriz.png",
+      redes: [{ icone: <FaLinkedin />, url: "https://linkedin.com" }],
+    },
+    {
+      nome: "Felipe Andrès",
+      cargo: "Desenvolvedor de Software",
+      foto: "/felipe.png",
+      redes: [
+        { icone: <FaGithub />, url: "https://github.com/feandres" },
+        { icone: <FaLinkedin />, url: "https://linkedin.com/in/feandres50" },
+      ],
+    },
+    {
+      nome: "Marcos Estrela",
+      cargo: "Desenvolvedor de Software",
+      foto: "/marcos.png",
+      redes: [
+        { icone: <FaGithub />, url: "https://github.com" },
+        { icone: <FaInstagram />, url: "https://instagram.com" },
+      ],
+    },
+  ];
+
   return (
-    <section className="container mx-auto px-4 py-12">
-      <h1 className="text-3xl font-bold mb-6">Sobre Nós</h1>
-      <div className="space-y-4 text-gray-700 leading-relaxed">
-        <p>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam
-          scelerisque eros vitae orci ultricies, vitae vehicula sapien
-          tristique. Aenean euismod nulla ac massa fermentum, sit amet volutpat
-          mi gravida. Sed eget aliquam est. Fusce sed libero id sapien
-          scelerisque congue eget nec purus.
-        </p>
-        <p>
-          Sed ut perspiciatis unde omnis iste natus error sit voluptatem
-          accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae
-          ab illo inventore veritatis et quasi architecto beatae vitae dicta
-          sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit
-          aspernatur aut odit aut fugit.
-        </p>
-        <p>
-          Vivamus dictum felis sit amet ipsum porta, vitae bibendum velit
-          aliquet. Morbi tristique tellus in felis vehicula, ac fermentum magna
-          condimentum. Aliquam erat volutpat. Duis pharetra massa nec leo
-          pulvinar, id malesuada sapien fringilla.
-        </p>
-        <p>
-          Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis
-          suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur? Quis
-          autem vel eum iure reprehenderit qui in ea voluptate velit esse quam
-          nihil molestiae consequatur?
+    <section className="container mx-auto px-4 py-12 space-y-16">
+      <div>
+        <h2 className="text-2xl font-bold mb-8">Nossa Equipe</h2>
+        <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
+          {equipe.map((membro, idx) => (
+            <div
+              key={idx}
+              className="flex flex-col items-center text-center space-y-4 p-4 border rounded-lg shadow-sm hover:shadow-md transition"
+            >
+              <div className="w-32 h-32 relative rounded-full overflow-hidden">
+                <Image
+                  src={membro.foto}
+                  alt={membro.nome}
+                  fill
+                  className="object-cover"
+                />
+              </div>
+              <div>
+                <h3 className="text-lg font-semibold">{membro.nome}</h3>
+                <p className="text-gray-500 text-sm">{membro.cargo}</p>
+              </div>
+              <div className="flex space-x-3">
+                {membro.redes.map((rede, i) => (
+                  <a
+                    key={i}
+                    href={rede.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-gray-600 hover:text-blue-600 text-xl"
+                  >
+                    {rede.icone}
+                  </a>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div>
+        <h2 className="text-2xl font-bold mb-6">Desenvolvimento do Projeto</h2>
+        <p className="text-gray-700 leading-relaxed">
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce
+          efficitur volutpat nunc, ut laoreet sem facilisis et. Nam et risus sed
+          erat fermentum viverra. Ut dignissim leo sed velit faucibus interdum.
+          Suspendisse potenti. Nulla facilisi. Duis consequat fermentum orci, et
+          accumsan nunc blandit ac. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce
+          efficitur volutpat nunc, ut laoreet sem facilisis et. Nam et risus sed
+          erat fermentum viverra. Ut dignissim leo sed velit faucibus interdum.
+          Suspendisse potenti. Nulla facilisi. Duis consequat fermentum orci, et
+          accumsan nunc blandit ac. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce
+          efficitur volutpat nunc, ut laoreet sem facilisis et. Nam et risus sed
+          erat fermentum viverra. Ut dignissim leo sed velit faucibus interdum.
+          Suspendisse potenti. Nulla facilisi. Duis consequat fermentum orci, et
+          accumsan nunc blandit ac.
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce
+          efficitur volutpat nunc, ut laoreet sem facilisis et. Nam et risus sed
+          erat fermentum viverra. Ut dignissim leo sed velit faucibus interdum.
+          Suspendisse potenti. Nulla facilisi. Duis consequat fermentum orci, et
+          accumsan nunc blandit ac. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce
+          efficitur volutpat nunc, ut laoreet sem facilisis et. Nam et risus sed
+          erat fermentum viverra. Ut dignissim leo sed velit faucibus interdum.
+          Suspendisse potenti. Nulla facilisi. Duis consequat fermentum orci, et
+          accumsan nunc blandit ac. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce
+          efficitur volutpat nunc, ut laoreet sem facilisis et. Nam et risus sed
+          erat fermentum viverra. Ut dignissim leo sed velit faucibus interdum.
+          Suspendisse potenti. Nulla facilisi. Duis consequat fermentum orci, et
+          accumsan nunc blandit ac.
         </p>
       </div>
+
+
     </section>
   );
 }
