@@ -1,5 +1,6 @@
 // app/pages/dashboard/page.tsx
 import React from 'react';
+import {Hero} from '@/components/hero';
 
 const DashboardPage: React.FC = () => {
   const malhaTotalKm = 120; 
@@ -12,6 +13,11 @@ const DashboardPage: React.FC = () => {
   const zonas30TotalArea = 35; // km²
 
   return (
+
+    <>
+    
+    <Hero />
+    
     <div className="container mx-auto p-6 space-y-8">
       {/* Indicadores gerais */}
       <section className="grid grid-cols-3 gap-6">
@@ -49,6 +55,8 @@ const DashboardPage: React.FC = () => {
         </div>
       </section>
     </div>
+        </>
+
   );
 };
 
