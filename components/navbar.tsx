@@ -23,7 +23,6 @@ export function Navbar() {
         { href: "/map/pdci", label: "PDCI" },
       ]
     },
-    { href: "/info", label: "Sobre" },
   ];
 
   return (
