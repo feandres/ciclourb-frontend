@@ -1,63 +1,89 @@
-// app/pages/dashboard/page.tsx
-import React from 'react';
-import {Hero} from '@/components/hero';
+import React from "react";
+import Hero from "@/components/hero";
 
-const DashboardPage: React.FC = () => {
-  const malhaTotalKm = 120; 
-  const malhaPorTipologia = [
-    { tipologia: 'Ciclovia bidirecional', km: 50 },
-    { tipologia: 'Ciclofaixa unidirecional', km: 30 },
-    { tipologia: 'Passeio compartilhado', km: 20 },
-    { tipologia: 'Ciclorrota', km: 20 },
-  ];
-  const zonas30TotalArea = 35; // km²
-
+export default function DataPage() {
   return (
-
     <>
-    
-    <Hero />
-    
-    <div className="container mx-auto p-6 space-y-8">
-      {/* Indicadores gerais */}
-      <section className="grid grid-cols-3 gap-6">
-        <div className="bg-white p-4 shadow rounded">
-          Total km da malha: {malhaTotalKm} km
+      <Hero imageUrl="/mateus.png" />
+
+      
+
+      <section className="w-full bg-[#403500] text-white px-6 py-10">
+        <h2 className="text-lg font-bold mb-8">Resumo</h2>
+
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+          <div>
+            <p className="text-xl font-medium">Malha Cicloviária</p>
+            <p className="text-3xl font-semibold mt-2">501,7 km</p>
+          </div>
+          <div>
+            <p className="text-xl font-medium">Estações Bicicletar</p>
+            <p className="text-3xl font-semibold mt-2">253</p>
+          </div>
+          <div>
+            <p className="text-xl font-medium">Malha Proposta PDCI</p>
+            <p className="text-3xl font-semibold mt-2">438,6 km</p>
+          </div>
+          <div>
+            <p className="text-xl font-medium">Implantado Conforme PDCI</p>
+            <p className="text-3xl font-semibold mt-2">*</p>
+          </div>
         </div>
-        <div className="bg-white p-4 shadow rounded">
-          Total área Zonas 30: {zonas30TotalArea} km²
-        </div>
-        <div className="bg-white p-4 shadow rounded">
-          Malha por tipologia:
-          <ul>
-            {malhaPorTipologia.map(t => (
-              <li key={t.tipologia}>
-                {t.tipologia}: {t.km} km
-              </li>
-            ))}
-          </ul>
-        </div>
+
+        <p className="text-sm mt-8 text-right">
+          Última atualização: XX/XX/XXXX
+        </p>
       </section>
 
-      {/* Placeholders de gráficos */}
-      <section className="grid grid-cols-2 gap-6">
-        <div className="bg-gray-100 h-64 flex items-center justify-center rounded shadow">
-          Gráfico: % Planejamento vs % Realizado PDCI
-        </div>
-        <div className="bg-gray-100 h-64 flex items-center justify-center rounded shadow">
-          Gráfico: Evolução da malha por tipologia por ano
-        </div>
-        <div className="bg-gray-100 h-64 flex items-center justify-center rounded shadow">
-          Gráfico: Ciclistas por turno por ano
-        </div>
-        <div className="bg-gray-100 h-64 flex items-center justify-center rounded shadow">
-          Tabela: Bicicletar - Pontos por bairro
-        </div>
+      <section className="w-full px-6 py-10">
+        <h3 className="text-xl font-bold mb-4">Malha Cicloviária Atualizada</h3>
+        <p className="text-justify leading-relaxed text-gray-800">
+          A malha cicloviária de Fortaleza é composta por quatro tipologias de
+          infraestrutura: ciclovias, ciclofaixas, ciclorrotas e passeios
+          compartilhados. As ciclovias correspondem a espaços segregados
+          fisicamente, geralmente por canteiro; as ciclofaixas são demarcadas
+          por pintura no leito viário, frequentemente acompanhadas de tachões e
+          balizadores; as ciclorrotas configuram vias compartilhadas, com limite
+          de velocidade de até 30 km/h; e os passeios compartilhados consistem
+          em calçadas destinadas ao uso conjunto de pedestres e ciclistas. Essas
+          tipologias foram implantadas de forma gradual ao longo dos anos, com
+          variação na extensão de cada uma. O Observatório Cicloviário de
+          Fortaleza, mantido pelo Ciclourb, realiza o monitoramento e registro
+          sistemático dessas infraestruturas.
+        </p>
       </section>
-    </div>
-        </>
 
+      <section className="w-full px-6 py-10">
+        <h3 className="text-xl font-bold mb-4">
+          Contagens Volumétricas de Ciclistas
+        </h3>
+        <p className="text-justify leading-relaxed text-gray-800">
+          A tabulação dos dados de contagens tem como finalidade subsidiar o
+          planejamento das infraestruturas cicloviárias e respaldar sua
+          implantação e manutenção por meio do registro documentado do fluxo de
+          ciclistas. As informações disponibilizadas em nossa plataforma são
+          provenientes de levantamentos realizados pela Autarquia Municipal de
+          Trânsito e Cidadania (AMC), pela Associação dos Ciclistas Urbanos de
+          Fortaleza (Ciclovida) e pelo Ciclourb.
+        </p>
+      </section>
+
+      <section className="w-full px-6 py-10">
+        <h3 className="text-xl font-bold mb-4">
+          Análise do Plano Diretor Cicloviário Integrado de Fortaleza/CE
+        </h3>
+        <p className="text-justify leading-relaxed text-gray-800">
+          O Plano Cicloviário de Fortaleza tem como objetivo central fornecer à
+          cidade os instrumentos e a infraestrutura necessários para a
+          implantação de uma rede cicloviária integrada ao sistema de transporte
+          público de passageiros e aos equipamentos urbanos, promovendo o uso de
+          modos de transporte não motorizados. Nesse contexto, o Observatório
+          Cicloviário de Fortaleza, mantido pelo Ciclourb, atua no monitoramento
+          da execução do plano, bem como de suas alterações e eventuais
+          incongruências, por meio da coleta de dados e da elaboração de
+          análises técnicas.
+        </p>
+      </section>
+    </>
   );
-};
-
-export default DashboardPage;
+}

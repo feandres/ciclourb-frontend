@@ -1,19 +1,28 @@
-export function Hero() {
+import Image from "next/image";
+
+interface HeroProps {
+  imageUrl: string; 
+}
+
+export default function Hero({ imageUrl }: HeroProps) {
   return (
-    <section
-      className="relative h-[500px] flex items-center justify-center bg-cover bg-center text-white"
-      style={{
-        backgroundImage: "url('/hero.png')", 
-      }}
-    >
-      <div className="bg-black/50 absolute inset-0" />
-      <div className="relative z-10 text-center px-4">
-        <h1 className="text-4xl font-bold sm:text-5xl">
-          Bem-vindo ao Observatório Ciclourb
-        </h1>
-        <p className="mt-4 text-lg max-w-2xl mx-auto">
-          Plataforma de análise e visualização de dados cicloviários.
-        </p>
+    <section className="relative w-full h-[300px] md:h-[400px] lg:h-[500px] overflow-hidden">
+      <Image
+        src={imageUrl}
+        alt="Hero"
+        fill
+        priority
+        className="object-cover"
+      />
+
+      <div className="absolute bottom-1 left-6">
+        <Image
+          src="/logo_alt.png"
+          alt="CicloUrb Logo"
+          width={160}
+          height={80}
+          className="w-auto h-16 md:h-20 lg:h-80"
+        />
       </div>
     </section>
   );
