@@ -4,15 +4,19 @@ import { useEffect, useRef, useState } from "react";
 import maplibregl, { Map } from "maplibre-gl";
 import type { FeatureCollection, Geometry, GeoJsonProperties } from "geojson";
 import "maplibre-gl/dist/maplibre-gl.css";
+import { createRoot } from "react-dom/client";
+import MalhaPopup from "./malhaPopup";
 
 interface Props {
-  geojsonData: FeatureCollection<Geometry, GeoJsonProperties>;
+  malhaData: FeatureCollection<Geometry, GeoJsonProperties>;
+  zonas30Data: FeatureCollection<Geometry, GeoJsonProperties>;
+  bicicletarData: FeatureCollection<Geometry, GeoJsonProperties>;
 }
 
-export function MapView({ geojsonData }: Props) {
+export function MapView({ malhaData, zonas30Data, bicicletarData }: Props) {
   const mapContainer = useRef<HTMLDivElement>(null);
   const mapRef = useRef<Map | null>(null);
-  const [baseLayer, setBaseLayer] = useState<"raster" | "vector">("raster");
+  const [baseLayer, setBaseLayer] = useState<"raster" | "vector">("vector");
   const [mapLoaded, setMapLoaded] = useState(false);
   const [visible, setVisible] = useState(true);
 
@@ -59,7 +63,7 @@ export function MapView({ geojsonData }: Props) {
 
       map.addSource("vias", {
         type: "geojson",
-        data: geojsonData,
+        data: malhaData,
       });
 
       map.addLayer({
@@ -67,10 +71,99 @@ export function MapView({ geojsonData }: Props) {
         type: "line",
         source: "vias",
         paint: {
-          "line-color": "#ff0000",
+          "line-color": [
+            "match",
+            ["get", "tipologia"],
+            "Ciclofaixa", "#ff0000",
+            "Ciclovia", "#00ff00", 
+            "Ciclorrota", "#0000ff", 
+            "Passeio compartilhado", "#ffff00", 
+            "#888888" 
+          ],
           "line-width": 3,
         },
       });
+
+      map.addSource('zonas30', {
+        type: 'geojson',
+        data: zonas30Data
+      });
+
+      map.addLayer({
+        id: 'zonas30',
+        type: 'fill',
+        source: 'zonas30',
+        layout: {},
+        paint: {
+          'fill-color': '#00ffff',
+        },
+      });
+
+      map.addSource('bicicletar', {
+        type: 'geojson',
+        data: bicicletarData
+      });
+
+      map.addLayer({
+        id: 'bicicletar',
+        type: 'circle',
+        source: 'bicicletar',
+        paint: {
+          'circle-color': '#F54927',
+          'circle-radius': 4,
+        },
+      });
+    });
+
+    map.on("mouseenter", "vias", (e) => {
+      map.getCanvas().style.cursor = "pointer";
+
+      if (!e.features) return ;
+      const feature = e.features[0];
+
+      map.addLayer({
+          id: "highlighted-via",
+          type: "line",
+          source: "vias",
+          paint: {
+            "line-color": [
+              "match",
+              ["get", "tipologia"],
+              "Ciclofaixa", "#ff0000",
+              "Ciclovia", "#00ff00", 
+              "Ciclorrota", "#0000ff", 
+              "Passeio compartilhado", "#ffff00", 
+              "#888888" 
+            ],
+            "line-width": 6,        
+          },
+          filter: [
+            "==", ["get", "id"], feature.properties.id,
+          ],
+        });
+    });
+
+    map.on("mouseleave", "vias", () => {
+      map.getCanvas().style.cursor = "";
+      if (map.getLayer("highlighted-via")) {
+        map.removeLayer("highlighted-via");
+      }
+    });
+
+    map.on("click", "vias", (e) => {
+      if (!e.features) return;
+
+      const props = e.features[0].properties;
+
+      const popupNode = document.createElement("div");
+      const root = createRoot(popupNode);
+      root.render(<MalhaPopup props={props}/>)
+
+      new maplibregl.Popup()
+        .setLngLat(e.lngLat)
+        .setDOMContent(popupNode)
+        .addTo(map);
+
     });
 
     return () => {
@@ -78,7 +171,7 @@ export function MapView({ geojsonData }: Props) {
       mapRef.current = null;
       setMapLoaded(false);
     };
-  }, [geojsonData]);
+  }, [malhaData, zonas30Data, bicicletarData]);
 
   useEffect(() => {
     if (!mapRef.current || !mapLoaded) return;
@@ -108,10 +201,10 @@ export function MapView({ geojsonData }: Props) {
   }, [visible, mapLoaded]);
 
   return (
-    <div className="relative w-full h-[calc(100vh-8rem)]">
+    <div className="relative w-full h-screen">
       <div ref={mapContainer} className="h-full w-full" />
 
-      <div className="absolute top-4 left-4 z-10 bg-white rounded-lg shadow p-3 space-y-2">
+      <div className="absolute top-25 left-4 z-10 bg-white rounded-lg shadow p-3 space-y-2">
         <button
           onClick={() =>
             setBaseLayer((prev) => (prev === "raster" ? "vector" : "raster"))
@@ -129,6 +222,71 @@ export function MapView({ geojsonData }: Props) {
           />
           <span className="inline-block w-5 h-3 rounded bg-red-500" />
           <span className="text-sm">Vias</span>
+        </label>
+      </div>
+
+      <div className="absolute bottom-2 left-2 z-10 bg-white/80 rounded-lg shadow p-3">
+        <h1 className="text-xl font-bold">Legenda</h1>
+        <label className="flex items-center gap-2">
+          <input
+            type="checkbox"
+            checked={visible}
+            onChange={() => setVisible((prev) => !prev)}
+          />
+          <span className="inline-block w-5 h-3 rounded bg-red-500" />
+          <span className="text-sm">Ciclofaixa</span>
+        </label>
+        <label className="flex items-center gap-2">
+          <input
+            type="checkbox"
+            checked={visible}
+            onChange={() => setVisible((prev) => !prev)}
+          />
+
+          <span className="inline-block w-5 h-3 rounded bg-green-500" />
+          <span className="text-sm">Ciclovia</span>
+        </label>
+
+        <label className="flex items-center gap-2">
+          <input
+            type="checkbox"
+            checked={visible}
+            onChange={() => setVisible((prev) => !prev)}
+          />
+
+          <span className="inline-block w-5 h-3 rounded bg-blue-500" />
+          <span className="text-sm">Ciclorrota</span>
+        </label>
+
+        <label className="flex items-center gap-2">
+          <input
+            type="checkbox"
+            checked={visible}
+            onChange={() => setVisible((prev) => !prev)}
+          />
+
+          <span className="inline-block w-5 h-3 rounded bg-yellow-500" />
+          <span className="text-sm">Passeio compartilhado</span>
+        </label>
+        <label className="flex items-center gap-2">
+          <input
+            type="checkbox"
+            checked={visible}
+            onChange={() => setVisible((prev) => !prev)}
+          />
+
+          <span className="inline-block w-5 h-3 rounded bg-yellow-500" />
+          <span className="text-sm">Zonas 30</span>
+        </label>
+        <label className="flex items-center gap-2">
+          <input
+            type="checkbox"
+            checked={visible}
+            onChange={() => setVisible((prev) => !prev)}
+          />
+
+          <span className="inline-block w-5 h-3 rounded bg-yellow-500" />
+          <span className="text-sm">Pontos do bicicletar</span>
         </label>
       </div>
     </div>

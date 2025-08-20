@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo, useContext } from "react";
 import { MapView } from "@/components/map";
+import { useFilterContext } from "@/contexts/FilterContext";
 
 interface MalhaPDCI {
   id: number;
@@ -20,16 +21,32 @@ interface MalhaPDCI {
   geom: any;
 }
 
+interface Zonas30All{
+  id: number;
+  fid: number;
+  name: number;
+  geom: any;
+}
+
+interface Bicicletar {
+  fid: string;
+  name: string;
+  id_estacao: string;
+  vagas_atuais: string;
+  ano_inauguracao: string;
+  bairro: string;
+  regional: string;
+  long: string;
+  lat: string;
+  geom: any;
+}
+
 export default function MapPage() {
   const [malhas, setMalhas] = useState<MalhaPDCI[]>([]);
-  const [filters, setFilters] = useState({
-    tipologia: "",
-    sentido: "",
-    prazo: "",
-    executado: "",
-    ano: "",
-    dentro_do_prazo: "",
-  });
+  const [zonas30, setZonas30] = useState<Zonas30All[]>([]);
+  const [bicicletares, setBicicletares] = useState<Bicicletar[]>([]);
+
+  const { filters } = useFilterContext();
 
   useEffect(() => {
     async function fetchData() {
@@ -55,6 +72,22 @@ export default function MapPage() {
                   extensao
                   extensao_executada
                   geom
+                },
+                zonas30All{
+                  name
+                  geom
+                },
+                bicicletarAll{
+                  fid
+                  name
+                  id_estacao
+                  vagas_atuais
+                  ano_inauguracao
+                  bairro
+                  regional
+                  long
+                  lat
+                  geom
                 }
               }
             `,
@@ -63,6 +96,8 @@ export default function MapPage() {
 
         const { data } = await res.json();
         setMalhas(data.malhaPDCIAll);
+        setZonas30(data.zonas30All);
+        setBicicletares(data.bicicletarAll);
       } catch (error) {
         console.error("Erro ao buscar dados GraphQL:", error);
       }
@@ -71,7 +106,7 @@ export default function MapPage() {
     fetchData();
   }, []);
 
-  const filteredGeoJSON = useMemo(() => {
+  const filteredMalhaGeoJSON = useMemo(() => {
     const filtered = malhas.filter(malha => {
       return (
         (filters.tipologia ? malha.tipologia === filters.tipologia : true) &&
@@ -107,76 +142,51 @@ export default function MapPage() {
     };
   }, [malhas, filters]);
 
+  const filteresZonas30GeoJSON = useMemo(() => {
+
+    return {
+      type: "FeatureCollection" as const,
+      features: zonas30.map(zona30 => ({
+        type: "Feature" as const,
+        properties: {
+          id: zona30.id,
+          fid: zona30.fid,
+          name: zona30.name,
+        },
+        geometry: zona30.geom,
+      })),
+    };
+  }, [zonas30]);
+
+  const filteresBicletarGeoJSON = useMemo(() => {
+
+    return {
+      type: "FeatureCollection" as const,
+      features: bicicletares.map(bicicletar => ({
+        type: "Feature" as const,
+        properties: {
+          fid: bicicletar.fid,
+          name: bicicletar.name,
+          id_estacao: bicicletar.id_estacao,
+          vagas_atuais: bicicletar.vagas_atuais,
+          ano_inauguracao: bicicletar.ano_inauguracao,
+          bairro: bicicletar.bairro,
+          regional: bicicletar.regional,
+          long: bicicletar.long,
+          lat: bicicletar.lat,
+        },
+        geometry: bicicletar.geom,
+      })),
+    };
+  }, [bicicletares]);
+
   return (
-    <main className="flex-1 p-4">
-      <div className="mb-4 grid grid-cols-3 gap-2">
-        <select
-          className="border p-2"
-          value={filters.tipologia}
-          onChange={(e) => setFilters({ ...filters, tipologia: e.target.value })}
-        >
-          <option value="">Tipologia</option>
-          <option value="Ciclofaixa">Ciclofaixa</option>
-          <option value="Ciclovia">Ciclovia</option>
-          <option value="Passeio compartilhado">Passeio compartilhado</option>
-          <option value="Ciclorrota">Ciclorrota</option>
-        </select>
-
-        <select
-          className="border p-2"
-          value={filters.sentido}
-          onChange={(e) => setFilters({ ...filters, sentido: e.target.value })}
-        >
-          <option value="">Sentido</option>
-          <option value="Bidirecional">Bidirecional</option>
-          <option value="Unidirecional">Unidirecional</option>
-        </select>
-
-        <select
-          className="border p-2"
-          value={filters.prazo}
-          onChange={(e) => setFilters({ ...filters, prazo: e.target.value })}
-        >
-          <option value="">Prazo</option>
-          <option value="Curto">Curto</option>
-          <option value="Médio">Médio</option>
-          <option value="Longo">Longo</option>
-        </select>
-      </div>
-
-      <div className="mb-4 grid grid-cols-3 gap-2">
-        <select
-          className="border p-2"
-          value={filters.executado}
-          onChange={(e) => setFilters({ ...filters, executado: e.target.value })}
-        >
-          <option value="">Executado</option>
-          <option value="Sim">Sim</option>
-          <option value="Não">Não</option>
-        </select>
-
-        <select
-          className="border p-2"
-          value={filters.dentro_do_prazo}
-          onChange={(e) => setFilters({ ...filters, dentro_do_prazo: e.target.value })}
-        >
-          <option value="">Dentro do Prazo</option>
-          <option value="Sim">Sim</option>
-          <option value="Não">Não</option>
-        </select>
-
-        <input
-          type="text"
-          className="border p-2"
-          placeholder="Ano"
-          value={filters.ano}
-          onChange={(e) => setFilters({ ...filters, ano: e.target.value })}
-        />
-      </div>
-
-      <div className="w-full h-[calc(100vh-12rem)]">
-        <MapView geojsonData={filteredGeoJSON} />
-      </div>
-    </main>
+    <div className="w-full h-full">
+      <MapView 
+        malhaData={filteredMalhaGeoJSON} 
+        zonas30Data={filteresZonas30GeoJSON}
+        bicicletarData={filteresBicletarGeoJSON}
+      />
+    </div>
   );
 }

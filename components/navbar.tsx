@@ -16,8 +16,8 @@ export function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
 
   const navItems = [
-    { href: "/", label: "Início" },
-    { href: "/data", label: "Dados" },
+    { href: "/home", label: "Início" },
+    { href: "/home/data", label: "Dados" },
     { label: "Mapas", subItems: [
         { href: "/map/malha-atual", label: "Malha Atual" },
         { href: "/map/pdci", label: "PDCI" },
@@ -30,7 +30,7 @@ export function Navbar() {
       <nav className="container mx-auto flex h-16 items-center justify-between px-4 lg:px-6">
 
         <div className="flex items-center">
-          <a href="/" className="flex items-center">
+          <a href="/home" className="flex items-center">
             <img
               src="/logo.png"
               alt="Ciclourb Logo"
