@@ -10,7 +10,13 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectTrigger,
+  SelectContent,
+  SelectItem,
+  SelectValue,
+} from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
 
 type Contagem = {
@@ -69,7 +75,6 @@ export default function TabelaContagem() {
 
   return (
     <div className="space-y-6">
-      {/* Filtros */}
       <div className="flex gap-4">
         <Select onValueChange={(v) => setAno(v === "all" ? undefined : v)}>
           <SelectTrigger className="w-[150px]">
@@ -77,9 +82,14 @@ export default function TabelaContagem() {
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">Todos</SelectItem>
-            <SelectItem value="2022">2022</SelectItem>
+            <SelectItem value="2013">2013</SelectItem>
+            <SelectItem value="2014">2014</SelectItem>
+            <SelectItem value="2015">2015</SelectItem>
+            <SelectItem value="2016">2016</SelectItem>
+            <SelectItem value="2017">2017</SelectItem>
+            <SelectItem value="2018">2018</SelectItem>
+            <SelectItem value="2019">2019</SelectItem>
             <SelectItem value="2023">2023</SelectItem>
-            <SelectItem value="2024">2024</SelectItem>
           </SelectContent>
         </Select>
 
@@ -91,24 +101,23 @@ export default function TabelaContagem() {
             <SelectItem value="all">Todos</SelectItem>
             <SelectItem value="Manhã">Manhã</SelectItem>
             <SelectItem value="Tarde">Tarde</SelectItem>
-            <SelectItem value="Noite">Noite</SelectItem>
           </SelectContent>
         </Select>
 
-        <Select onValueChange={(v) => setRealizador(v === "all" ? undefined : v)}>
+        <Select
+          onValueChange={(v) => setRealizador(v === "all" ? undefined : v)}
+        >
           <SelectTrigger className="w-[200px]">
             <SelectValue placeholder="Realizador" />
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">Todos</SelectItem>
-            <SelectItem value="Prefeitura">Prefeitura</SelectItem>
+            <SelectItem value="AMC">AMC</SelectItem>
             <SelectItem value="Ciclovida">Ciclovida</SelectItem>
-            <SelectItem value="Ciclourb">Ciclourb</SelectItem>
           </SelectContent>
         </Select>
       </div>
 
-      {/* Tabela */}
       <div className="rounded-2xl shadow overflow-hidden">
         {loading ? (
           <div className="space-y-2 p-4">
@@ -144,7 +153,6 @@ export default function TabelaContagem() {
         )}
       </div>
 
-      {/* Paginação */}
       <div className="flex justify-end gap-4">
         <Button
           variant="secondary"
