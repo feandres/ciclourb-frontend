@@ -43,20 +43,20 @@ export default function HomePage() {
     {
       titulo: "Participação de Reuniões",
       texto: `Participação em reuniões e instâncias de diálogo com o poder público, visando ao monitoramento, acompanhamento e fiscalização das ações e políticas direcionadas à promoção da ciclomobilidade no município de Fortaleza.`,
-      imagem: "/mateus.png",
+      imagem: "/reuniao.jpeg",
       legenda:
         "Papo de Pedal realizado pela BICI (Bloomberg Initiative for Cycling Infrastructure) e Prefeitura Municipal de Fortaleza em abril de 2025",
     },
     {
       titulo: "Contagens Volumétricas de Ciclistas",
       texto: `Realização de contagens volumétricas e registros sistemáticos, com o objetivo de subsidiar o planejamento das infraestruturas cicloviárias e assegurar sua implantação por meio da documentação do fluxo de ciclistas.`,
-      imagem: "/mateus.png",
+      imagem: "/hero_1.jpg",
       legenda: "",
     },
     {
       titulo: "Pesquisas e Análises",
       texto: `Elaboração de análises e estudos técnicos sobre mobilidade urbana, com ênfase no contexto do município de Fortaleza, abrangendo seu planejamento urbano e as políticas públicas de transporte implementadas.`,
-      imagem: "/mateus.png",
+      imagem: "/hero_9.jpg",
       legenda:
         "Análise técnica do Plano Diretor Cicloviário do município de Fortaleza.",
     },
@@ -64,7 +64,7 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen">
-      <Hero imageUrl="/mateus.png" />
+      <Hero imageUrl="/hero_3.jpg" />
 
       <section className="py-16 px-4">
         <div className="max-w-4xl mx-auto">

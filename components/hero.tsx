@@ -15,13 +15,13 @@ export default function Hero({ imageUrl }: HeroProps) {
         className="object-cover"
       />
 
-      <div className="absolute bottom-1 left-6">
+      <div className="absolute bottom-20 left-20">
         <Image
           src="/logo_alt.png"
           alt="CicloUrb Logo"
           width={160}
           height={80}
-          className="w-auto h-16 md:h-20 lg:h-80"
+          className="w-auto h-16 md:h-20 lg:h-40"
         />
       </div>
     </section>
