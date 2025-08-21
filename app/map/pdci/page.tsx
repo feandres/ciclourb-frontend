@@ -20,6 +20,38 @@ interface MalhaPDCI {
   geom: any;
 }
 
+interface GeoJSONFeature {
+  type: "Feature";
+  properties: {
+    id: number;
+    fid: number;
+    name: string;
+    trecho: string;
+    tipologia: string;
+    sentido: string;
+    prazo: string;
+    executado: string;
+    ano: string;
+    dentro_do_prazo: string;
+    obs: string | null;
+    extensao: number;
+    extensao_executada: number;
+  };
+  geometry: any;
+}
+
+interface GeoJSONFeatureCollection {
+  type: "FeatureCollection";
+  features: GeoJSONFeature[];
+}
+
+// Extend the MapView props to include geojsonData
+declare module "@/components/map" {
+  interface Props {
+    geojsonData: GeoJSONFeatureCollection;
+  }
+}
+
 export default function MapPage() {
   const [malhas, setMalhas] = useState<MalhaPDCI[]>([]);
   const [filters, setFilters] = useState({
@@ -71,7 +103,7 @@ export default function MapPage() {
     fetchData();
   }, []);
 
-  const filteredGeoJSON = useMemo(() => {
+  const filteredGeoJSON = useMemo((): GeoJSONFeatureCollection => {
     const filtered = malhas.filter(malha => {
       return (
         (filters.tipologia ? malha.tipologia === filters.tipologia : true) &&
@@ -84,9 +116,9 @@ export default function MapPage() {
     });
 
     return {
-      type: "FeatureCollection" as const,
+      type: "FeatureCollection",
       features: filtered.map(malha => ({
-        type: "Feature" as const,
+        type: "Feature",
         properties: {
           id: malha.id,
           fid: malha.fid,
@@ -107,13 +139,17 @@ export default function MapPage() {
     };
   }, [malhas, filters]);
 
+  const handleFilterChange = (filterKey: keyof typeof filters, value: string) => {
+    setFilters(prev => ({ ...prev, [filterKey]: value }));
+  };
+
   return (
     <main className="flex-1 p-4">
       <div className="mb-4 grid grid-cols-3 gap-2">
         <select
-          className="border p-2"
+          className="border p-2 rounded"
           value={filters.tipologia}
-          onChange={(e) => setFilters({ ...filters, tipologia: e.target.value })}
+          onChange={(e) => handleFilterChange('tipologia', e.target.value)}
         >
           <option value="">Tipologia</option>
           <option value="Ciclofaixa">Ciclofaixa</option>
@@ -123,9 +159,9 @@ export default function MapPage() {
         </select>
 
         <select
-          className="border p-2"
+          className="border p-2 rounded"
           value={filters.sentido}
-          onChange={(e) => setFilters({ ...filters, sentido: e.target.value })}
+          onChange={(e) => handleFilterChange('sentido', e.target.value)}
         >
           <option value="">Sentido</option>
           <option value="Bidirecional">Bidirecional</option>
@@ -133,9 +169,9 @@ export default function MapPage() {
         </select>
 
         <select
-          className="border p-2"
+          className="border p-2 rounded"
           value={filters.prazo}
-          onChange={(e) => setFilters({ ...filters, prazo: e.target.value })}
+          onChange={(e) => handleFilterChange('prazo', e.target.value)}
         >
           <option value="">Prazo</option>
           <option value="Curto">Curto</option>
@@ -146,9 +182,9 @@ export default function MapPage() {
 
       <div className="mb-4 grid grid-cols-3 gap-2">
         <select
-          className="border p-2"
+          className="border p-2 rounded"
           value={filters.executado}
-          onChange={(e) => setFilters({ ...filters, executado: e.target.value })}
+          onChange={(e) => handleFilterChange('executado', e.target.value)}
         >
           <option value="">Executado</option>
           <option value="Sim">Sim</option>
@@ -156,9 +192,9 @@ export default function MapPage() {
         </select>
 
         <select
-          className="border p-2"
+          className="border p-2 rounded"
           value={filters.dentro_do_prazo}
-          onChange={(e) => setFilters({ ...filters, dentro_do_prazo: e.target.value })}
+          onChange={(e) => handleFilterChange('dentro_do_prazo', e.target.value)}
         >
           <option value="">Dentro do Prazo</option>
           <option value="Sim">Sim</option>
@@ -167,15 +203,15 @@ export default function MapPage() {
 
         <input
           type="text"
-          className="border p-2"
+          className="border p-2 rounded"
           placeholder="Ano"
           value={filters.ano}
-          onChange={(e) => setFilters({ ...filters, ano: e.target.value })}
+          onChange={(e) => handleFilterChange('ano', e.target.value)}
         />
       </div>
 
       <div className="w-full h-[calc(100vh-12rem)]">
-        <MapView geojsonData={filteredGeoJSON} />
+        {/* <MapView geojsonData={filteredGeoJSON} /> */}
       </div>
     </main>
   );

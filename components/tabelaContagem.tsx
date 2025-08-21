@@ -29,52 +29,56 @@ type Contagem = {
   geom: string;
 };
 
-export default function TabelaContagem() {
+type TabelaContagemProps = {
+  apiUrl: string;
+};
+
+export default function TabelaContagem({ apiUrl }: TabelaContagemProps) {
   const [data, setData] = useState<Contagem[]>([]);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
+  const [total, setTotal] = useState(0);
   const limit = 10;
 
   const [ano, setAno] = useState<string | undefined>();
   const [turno, setTurno] = useState<string | undefined>();
   const [realizador, setRealizador] = useState<string | undefined>();
 
+  const totalPages = Math.ceil(total / limit);
+
   async function fetchData() {
     setLoading(true);
-    const query = `
-      query($page: Int!, $limit: Int!, $ano: String, $turno: String, $realizador: String) {
-        contagemCiclistas(page: $page, limit: $limit, ano: $ano, turno: $turno, realizador: $realizador) {
-          local
-          data
-          turno
-          total
-          realizador
-          ano
-          geom
-        }
-      }
-    `;
 
-    const res = await fetch("http://localhost:3001/graphql", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        query,
-        variables: { page, limit, ano, turno, realizador },
-      }),
-    });
+    const params = new URLSearchParams();
+    params.append("page", page.toString());
+    params.append("limit", limit.toString());
+    if (ano) params.append("ano", ano);
+    if (turno) params.append("turno", turno);
+    if (realizador) params.append("realizador", realizador);
 
-    const json = await res.json();
-    setData(json.data?.contagemCiclistas ?? []);
-    setLoading(false);
+    try {
+      const res = await fetch(`${apiUrl}?${params.toString()}`);
+      const json = await res.json();
+      setData(json.data ?? []);
+      setTotal(json.total ?? 0);
+    } catch (error) {
+      console.error("Erro ao buscar contagens REST:", error);
+    } finally {
+      setLoading(false);
+    }
   }
 
   useEffect(() => {
+    setPage(1); // reset page quando filtros mudam
+  }, [ano, turno, realizador]);
+
+  useEffect(() => {
     fetchData();
-  }, [page, ano, turno, realizador]);
+  }, [page, ano, turno, realizador, apiUrl]);
 
   return (
     <div className="space-y-6">
+      {/* Filtros */}
       <div className="flex gap-4">
         <Select onValueChange={(v) => setAno(v === "all" ? undefined : v)}>
           <SelectTrigger className="w-[150px]">
@@ -118,6 +122,7 @@ export default function TabelaContagem() {
         </Select>
       </div>
 
+      {/* Tabela */}
       <div className="rounded-2xl shadow overflow-hidden">
         {loading ? (
           <div className="space-y-2 p-4">
@@ -153,6 +158,7 @@ export default function TabelaContagem() {
         )}
       </div>
 
+      {/* Paginação */}
       <div className="flex justify-end gap-4">
         <Button
           variant="secondary"
@@ -164,7 +170,7 @@ export default function TabelaContagem() {
         <Button
           variant="secondary"
           onClick={() => setPage((p) => p + 1)}
-          disabled={loading}
+          disabled={loading || page >= totalPages}
         >
           Próxima
         </Button>

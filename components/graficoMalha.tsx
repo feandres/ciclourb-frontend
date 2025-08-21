@@ -18,70 +18,61 @@ type Item = {
   valor: number;
 };
 
-type Props = {
-  apiUrl: string;
-};
-
-export default function EvolucaoMalhaChart({ apiUrl }: Props) {
+export default function EvolucaoMalhaChart() {
   const [data, setData] = useState<any[]>([]);
 
   useEffect(() => {
     async function fetchData() {
-      const query = `
-        query {
-          evolucaoMalhaPorTipologia {
-            ano
-            tipologia
-            valor
-          }
-        }
-      `;
+      try {
+        const res = await fetch(
+          "http://localhost:3001/dados/evolucao-malha-tipologia"
+        );
+        const json: Item[] = await res.json();
 
-      const res = await fetch(apiUrl, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ query }),
-      });
+        const items = json.map((i) => ({
+          ano: i.ano,
+          tipologia: i.tipologia,
+          valor: Math.round((Number(i.valor) / 1000) * 10) / 10,
+        }));
 
-      const json = await res.json();
-      const items: Item[] = json.data.evolucaoMalhaPorTipologia;
+        const tipologias = [
+          "Ciclovia bidirecional",
+          "Ciclofaixa",
+          "Ciclorrota",
+          "Passeio compartilhado",
+        ];
 
-      const grouped: Record<string, Record<string, number>> = {};
-      items.forEach(({ ano, tipologia, valor }) => {
-        if (!grouped[ano]) grouped[ano] = { ano };
-        grouped[ano][tipologia] = valor / 1000; // metros -> km
-      });
-
-      const anos = Object.keys(grouped)
-        .map(Number)
-        .sort((a, b) => a - b);
-      const minAno = anos[0];
-      const maxAno = anos[anos.length - 1];
-
-      const tipologias = [
-        "Ciclovia bidirecional",
-        "Ciclofaixa",
-        "Ciclorrota",
-        "Passeio compartilhado",
-      ];
-
-      const result: any[] = [];
-      let prev: Record<string, number> = {};
-      for (let ano = minAno; ano <= maxAno; ano++) {
-        const anoStr = ano.toString();
-        const entry: Record<string, any> = { ano: anoStr };
-        tipologias.forEach((tip) => {
-          entry[tip] = grouped[anoStr]?.[tip] ?? prev[tip] ?? 0;
+        const grouped: Record<number, Record<string, number>> = {};
+        items.forEach(({ ano, tipologia, valor }) => {
+          if (!grouped[ano]) grouped[ano] = { ano };
+          grouped[ano][tipologia] = valor;
         });
-        result.push(entry);
-        prev = entry;
-      }
 
-      setData(result);
+        const anos = Array.from(new Set(items.map((i) => i.ano))).sort(
+          (a, b) => a - b
+        );
+        const minAno = anos[0];
+        const maxAno = anos[anos.length - 1];
+
+        const result: any[] = [];
+        let prev: Record<string, number> = {};
+        for (let ano = minAno; ano <= maxAno; ano++) {
+          const entry: Record<string, any> = { ano };
+          tipologias.forEach((tip) => {
+            entry[tip] = grouped[ano]?.[tip] ?? prev[tip] ?? 0;
+          });
+          result.push(entry);
+          prev = entry;
+        }
+
+        setData(result);
+      } catch (error) {
+        console.error("Erro ao buscar dados da malha por tipologia:", error);
+      }
     }
 
     fetchData();
-  }, [apiUrl]);
+  }, []);
 
   return (
     <div className="w-full h-[300px] sm:h-[400px] lg:h-[500px] bg-white rounded-2xl shadow p-2 sm:p-4">
