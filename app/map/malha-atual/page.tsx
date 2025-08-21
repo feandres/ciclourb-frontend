@@ -1,8 +1,7 @@
 "use client";
 
-import { useEffect, useState, useMemo, useContext } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { MapView } from "@/components/map";
-import { useFilterContext } from "@/contexts/FilterContext";
 
 interface MalhaPDCI {
   id: number;
@@ -46,8 +45,14 @@ export default function MapPage() {
   const [zonas30, setZonas30] = useState<Zonas30All[]>([]);
   const [bicicletares, setBicicletares] = useState<Bicicletar[]>([]);
 
-  const { filters } = useFilterContext();
-
+  const [filters, setFilters] = useState({
+    tipologia: "",
+    sentido: "",
+    prazo: "",
+    executado: "",
+    ano: "",
+    dentro_do_prazo: "",
+  });
   useEffect(() => {
     async function fetchData() {
       try {
@@ -98,6 +103,8 @@ export default function MapPage() {
         setMalhas(data.malhaPDCIAll);
         setZonas30(data.zonas30All);
         setBicicletares(data.bicicletarAll);
+
+        console.log("Dados Bicicletar:", data.bicicletarAll);
       } catch (error) {
         console.error("Erro ao buscar dados GraphQL:", error);
       }
