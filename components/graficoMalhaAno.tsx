@@ -16,70 +16,57 @@ type Item = {
   valor: number;
 };
 
-type Props = {
-  apiUrl: string;
-};
-
-export default function EvolucaoMalhaAnoChart({ apiUrl }: Props) {
+export default function EvolucaoMalhaAnoChart() {
   const [data, setData] = useState<Item[]>([]);
 
   useEffect(() => {
     async function fetchData() {
-      const query = `
-        query {
-          evolucaoMalhaPorAno {
-            ano
-            valor
-          }
+      try {
+        const res = await fetch("http://localhost:3001/dados/evolucao-malha-ano");
+        const json = await res.json();
+
+        const items: Item[] = json.map((i: any) => ({
+          ano: i.ano.toString(),
+          valor: Math.round((Number(i.valor) / 1000) * 10) / 10,
+        }));
+
+        // Determinar intervalo de anos
+        const anos = items.map((i) => Number(i.ano)).sort((a, b) => a - b);
+        const minAno = anos[0];
+        const maxAno = anos[anos.length - 1];
+
+        // Preencher anos faltantes com valor do ano anterior
+        const result: Item[] = [];
+        let prevValor = 0;
+        for (let ano = minAno; ano <= maxAno; ano++) {
+          const anoStr = ano.toString();
+          const valor = items.find((i) => i.ano === anoStr)?.valor ?? prevValor;
+          result.push({ ano: anoStr, valor });
+          prevValor = valor;
         }
-      `;
 
-      const res = await fetch(apiUrl, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ query }),
-      });
-
-      const json = await res.json();
-      const items: Item[] = json.data.evolucaoMalhaPorAno;
-
-      // Converter metros para km
-      const mapped: Record<string, number> = {};
-      items.forEach(({ ano, valor }) => {
-        mapped[ano] = valor / 1000;
-      });
-
-      // Determinar intervalo de anos
-      const anos = Object.keys(mapped)
-        .map(Number)
-        .sort((a, b) => a - b);
-      const minAno = anos[0];
-      const maxAno = anos[anos.length - 1];
-
-      // Preencher anos faltantes com valor do ano anterior
-      const result: Item[] = [];
-      let prevValor = 0;
-      for (let ano = minAno; ano <= maxAno; ano++) {
-        const anoStr = ano.toString();
-        const valor = mapped[anoStr] ?? prevValor;
-        result.push({ ano: anoStr, valor });
-        prevValor = valor;
+        setData(result);
+      } catch (error) {
+        console.error("Erro ao buscar dados da malha por ano:", error);
       }
-
-      setData(result);
     }
 
     fetchData();
-  }, [apiUrl]);
+  }, []);
 
   return (
     <ResponsiveContainer width="100%" height={400}>
       <LineChart data={data}>
         <XAxis dataKey="ano" />
         <YAxis />
-        <Tooltip />
+        <Tooltip formatter={(v: number) => `${v.toLocaleString()} km`} />
         <Legend />
-        <Line type="monotone" dataKey="valor" stroke="#2563eb" name="Malha (km)" />
+        <Line
+          type="monotone"
+          dataKey="valor"
+          stroke="#2563eb"
+          name="Malha (km)"
+        />
       </LineChart>
     </ResponsiveContainer>
   );

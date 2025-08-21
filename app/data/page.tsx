@@ -1,31 +1,21 @@
-import React from "react";
+"use client";
+
+import React, { useEffect, useState } from "react";
 import Hero from "@/components/hero";
 import EvolucaoMalhaChart from "@/components/graficoMalha";
 import EvolucaoMalhaAnoChart from "@/components/graficoMalhaAno";
 import TabelaContagem from "@/components/tabelaContagem";
 
-async function fetchIndicadores() {
-  const query = `
-    query {
-      dashboardIndicadores {
-        nome
-        valor
-        unidade
-      }
-    }
-  `;
+interface Indicadores {
+  [key: string]: number;
+}
 
-  const res = await fetch("http://localhost:3001/graphql", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ query }),
-  });
-
-  const json = await res.json();
-  const indicadores = json.data.dashboardIndicadores;
+async function fetchIndicadoresREST(): Promise<Indicadores> {
+  const res = await fetch("http://localhost:3001/dados/indicadores");
+  const indicadoresRaw = await res.json();
 
   const kmIndicadores: Record<string, number> = {};
-  indicadores.forEach(({ nome, valor, unidade }: any) => {
+  indicadoresRaw.forEach(({ nome, valor, unidade }: any) => {
     if (unidade === "m") {
       kmIndicadores[nome] = parseFloat((valor / 1000).toFixed(1));
     } else if (unidade === "unidades") {
@@ -36,8 +26,20 @@ async function fetchIndicadores() {
   return kmIndicadores;
 }
 
-export default async function DataPage() {
-  const indicadores = await fetchIndicadores();
+export default function DataPage() {
+  const [indicadores, setIndicadores] = useState<Indicadores>({});
+
+  useEffect(() => {
+    async function loadIndicadores() {
+      try {
+        const data = await fetchIndicadoresREST();
+        setIndicadores(data);
+      } catch (error) {
+        console.error("Erro ao buscar indicadores REST:", error);
+      }
+    }
+    loadIndicadores();
+  }, []);
 
   const totalPorTipologia = [
     { nome: "Ciclorrotas", valor: indicadores["Ciclorrotas"] || 0 },
@@ -53,14 +55,23 @@ export default async function DataPage() {
     <>
       <Hero imageUrl="/hero_6.jpg" />
 
-      <section className="w-full bg-gradient-to-r from-[#FFF8E5] via-[#FFFBF0] to-[#FFF8E5] py-6 sm:py-8 border-b-2 border-[#d6c9a3] shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 flex flex-col items-center text-center">
-          <div className="bg-white/70 backdrop-blur-sm rounded-2xl px-8 py-6 shadow-lg border border-[#d6c9a3]/40 mb-6">
-            <h2 className="text-xl sm:text-2xl lg:text-3xl font-extrabold text-[#4D3A08] mb-2 tracking-tight">
+      <section className="w-full bg-gradient-to-r from-[#FFF8E5] via-[#FFFBF0] to-[#FFF8E5] py-6 sm:py-12 border-b-2 border-[#d6c9a3] shadow-sm">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 flex flex-col items-center text-center space-y-6">
+          <div className="bg-white/70 backdrop-blur-sm rounded-2xl px-8 py-6 shadow-lg border border-[#d6c9a3]/40">
+            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-[#4D3A08] mb-4 tracking-tight flex items-center justify-center gap-2">
               Observatório Cicloviário de Fortaleza
             </h2>
-            <p className="text-sm text-[#79693F] font-medium">
-              Monitoramento e análise da infraestrutura cicloviária urbana
+            <p className="text-sm sm:text-base text-[#79693F] font-medium leading-relaxed text-justify">
+              O Observatório Cicloviário de Fortaleza é uma iniciativa dedicada
+              ao monitoramento da infraestrutura voltada para bicicletas,
+              comparando o que foi planejado em políticas e diretrizes oficiais
+              com o que, de fato, foi executado. A plataforma também reúne e
+              organiza dados sobre o sistema de bicicletas compartilhadas da
+              cidade (Bicicletar), o perfil dos ciclistas e outras informações
+              relevantes para a mobilidade urbana por bicicleta. O Observatório
+              Cicloviário de Fortaleza tem como principal inspiração o modelo
+              desenvolvido pela AMECICIO (Associação Metropolitana de Ciclistas
+              do Recife) na Região Metropolitana do Recife/PE.
             </p>
           </div>
 
@@ -227,7 +238,7 @@ export default async function DataPage() {
               </h2>
             </div>
             <div className="bg-white/95 backdrop-blur-sm rounded-3xl shadow-2xl p-6 sm:p-8 border-2 border-[#d6c9a3]/40 hover:shadow-3xl transition-shadow">
-              <EvolucaoMalhaAnoChart apiUrl="http://localhost:3001/graphql" />
+              <EvolucaoMalhaAnoChart />
             </div>
           </div>
 
@@ -238,7 +249,7 @@ export default async function DataPage() {
               </h2>
             </div>
             <div className="bg-white/95 backdrop-blur-sm rounded-3xl shadow-2xl p-6 sm:p-8 border-2 border-[#d6c9a3]/40 hover:shadow-3xl transition-shadow">
-              <EvolucaoMalhaChart apiUrl="http://localhost:3001/graphql" />
+              <EvolucaoMalhaChart  />
             </div>
           </div>
         </div>
@@ -292,7 +303,7 @@ export default async function DataPage() {
               </h3>
             </div>
             <div className="p-6 sm:p-8 overflow-x-auto">
-              <TabelaContagem />
+              <TabelaContagem apiUrl="http://localhost:3001/contagem" />{" "}
             </div>
           </div>
         </div>

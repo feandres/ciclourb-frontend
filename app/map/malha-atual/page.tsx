@@ -20,10 +20,10 @@ interface MalhaPDCI {
   geom: any;
 }
 
-interface Zonas30All{
+interface Zonas30All {
   id: number;
   fid: number;
-  name: number;
+  name: string;
   geom: any;
 }
 
@@ -53,60 +53,23 @@ export default function MapPage() {
     ano: "",
     dentro_do_prazo: "",
   });
+
   useEffect(() => {
     async function fetchData() {
       try {
-        const res = await fetch("http://localhost:3001/graphql", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            query: `
-              query {
-                malhaPDCIAll {
-                  id
-                  fid
-                  name
-                  trecho
-                  tipologia
-                  sentido
-                  prazo
-                  executado
-                  ano
-                  dentro_do_prazo
-                  obs
-                  extensao
-                  extensao_executada
-                  geom
-                },
-                zonas30All{
-                  name
-                  geom
-                },
-                bicicletarAll{
-                  fid
-                  name
-                  id_estacao
-                  vagas_atuais
-                  ano_inauguracao
-                  bairro
-                  regional
-                  long
-                  lat
-                  geom
-                }
-              }
-            `,
-          }),
-        });
+        const [malhaRes, zonasRes, biciRes] = await Promise.all([
+          fetch("http://localhost:3001/malha-pdci").then(res => res.json()),
+          fetch("http://localhost:3001/zonas30").then(res => res.json()),
+          fetch("http://localhost:3001/bicicletar").then(res => res.json()),
+        ]);
 
-        const { data } = await res.json();
-        setMalhas(data.malhaPDCIAll);
-        setZonas30(data.zonas30All);
-        setBicicletares(data.bicicletarAll);
+        setMalhas(malhaRes);
+        setZonas30(zonasRes);
+        setBicicletares(biciRes);
 
-        console.log("Dados Bicicletar:", data.bicicletarAll);
+        console.log("Dados Bicicletar:", biciRes);
       } catch (error) {
-        console.error("Erro ao buscar dados GraphQL:", error);
+        console.error("Erro ao buscar dados da API REST:", error);
       }
     }
 
@@ -149,43 +112,37 @@ export default function MapPage() {
     };
   }, [malhas, filters]);
 
-  const filteresZonas30GeoJSON = useMemo(() => {
+  const filteresZonas30GeoJSON = useMemo(() => ({
+    type: "FeatureCollection" as const,
+    features: zonas30.map(zona30 => ({
+      type: "Feature" as const,
+      properties: {
+        id: zona30.id,
+        fid: zona30.fid,
+        name: zona30.name,
+      },
+      geometry: zona30.geom,
+    })),
+  }), [zonas30]);
 
-    return {
-      type: "FeatureCollection" as const,
-      features: zonas30.map(zona30 => ({
-        type: "Feature" as const,
-        properties: {
-          id: zona30.id,
-          fid: zona30.fid,
-          name: zona30.name,
-        },
-        geometry: zona30.geom,
-      })),
-    };
-  }, [zonas30]);
-
-  const filteresBicletarGeoJSON = useMemo(() => {
-
-    return {
-      type: "FeatureCollection" as const,
-      features: bicicletares.map(bicicletar => ({
-        type: "Feature" as const,
-        properties: {
-          fid: bicicletar.fid,
-          name: bicicletar.name,
-          id_estacao: bicicletar.id_estacao,
-          vagas_atuais: bicicletar.vagas_atuais,
-          ano_inauguracao: bicicletar.ano_inauguracao,
-          bairro: bicicletar.bairro,
-          regional: bicicletar.regional,
-          long: bicicletar.long,
-          lat: bicicletar.lat,
-        },
-        geometry: bicicletar.geom,
-      })),
-    };
-  }, [bicicletares]);
+  const filteresBicletarGeoJSON = useMemo(() => ({
+    type: "FeatureCollection" as const,
+    features: bicicletares.map(bicicletar => ({
+      type: "Feature" as const,
+      properties: {
+        fid: bicicletar.fid,
+        name: bicicletar.name,
+        id_estacao: bicicletar.id_estacao,
+        vagas_atuais: bicicletar.vagas_atuais,
+        ano_inauguracao: bicicletar.ano_inauguracao,
+        bairro: bicicletar.bairro,
+        regional: bicicletar.regional,
+        long: bicicletar.long,
+        lat: bicicletar.lat,
+      },
+      geometry: bicicletar.geom,
+    })),
+  }), [bicicletares]);
 
   return (
     <div className="w-full h-full">
