@@ -2,66 +2,13 @@
 
 import { useEffect, useState, useMemo } from "react";
 import { MapView } from "@/components/map";
-
-interface MalhaPDCI {
-  id: number;
-  fid: number;
-  name: string;
-  trecho: string;
-  tipologia: string;
-  sentido: string;
-  prazo: string;
-  executado: string;
-  ano: string;
-  dentro_do_prazo: string;
-  obs: string | null;
-  extensao: number;
-  extensao_executada: number;
-  geom: any;
-}
-
-interface Zonas30All {
-  id: number;
-  fid: number;
-  name: string;
-  geom: any;
-}
-
-interface Bicicletar {
-  fid: string;
-  name: string;
-  id_estacao: string;
-  vagas_atuais: string;
-  ano_inauguracao: string;
-  bairro: string;
-  regional: string;
-  geom: any;
-}
-
-interface Contagem {
-  id: number;
-  lat: string;
-  lon: string;
-  local: string;
-  data: string | null;
-  turno: string;
-  inicio: string;
-  fim: string;
-  masculino: string | null;
-  feminino: string | null;
-  total: string;
-  ciclistas_por_min: string;
-  realizador: string;
-  ano: string;
-  geom: any;
-}
-
+import type { FeatureCollection, Geometry, GeoJsonProperties } from "geojson";
 
 export default function MapPage() {
-  const [malhas, setMalhas] = useState<MalhaPDCI[]>([]);
-  const [zonas30, setZonas30] = useState<Zonas30All[]>([]);
-  const [bicicletares, setBicicletares] = useState<Bicicletar[]>([]);
-  const [contagens, setContagens] = useState<Contagem[]>([]); // novo
+  const [malhas, setMalhas] = useState<any[]>([]);
+  const [zonas30, setZonas30] = useState<any[]>([]);
+  const [bicicletares, setBicicletares] = useState<FeatureCollection<Geometry, GeoJsonProperties> | null>(null);
+  const [contagens, setContagens] = useState<FeatureCollection<Geometry, GeoJsonProperties> | null>(null);
 
   const [filters, setFilters] = useState({
     tipologia: "",
@@ -70,27 +17,24 @@ export default function MapPage() {
     executado: "",
     ano: "",
     dentro_do_prazo: "",
-    contagemAno: "", 
   });
 
   useEffect(() => {
     async function fetchData() {
       try {
-        const [malhaRes, zonasRes, biciRes, contagemRes] = await Promise.all([
+        const [malhaRes, zonasRes, biciRes, contRes] = await Promise.all([
           fetch("http://localhost:3001/malha-pdci").then(res => res.json()),
           fetch("http://localhost:3001/zonas30").then(res => res.json()),
           fetch("http://localhost:3001/bicicletar").then(res => res.json()),
-          fetch("http://localhost:3001/contagem/contagens").then(res => res.json()), 
+          fetch("http://localhost:3001/contagem/contagens").then(res => res.json()),
         ]);
 
         setMalhas(malhaRes);
         setZonas30(zonasRes);
         setBicicletares(biciRes);
-        setContagens(contagemRes);
-        
-        console.log("Bicicletar: ", biciRes);
-        console.log("Contagens:", contagemRes);
+        setContagens(contRes); 
 
+        console.log("GeoJSON Bicicletar:", biciRes);
       } catch (error) {
         console.error("Erro ao buscar dados da API REST:", error);
       }
@@ -148,31 +92,16 @@ export default function MapPage() {
     })),
   }), [zonas30]);
 
-  const filteresBicletarGeoJSON = useMemo(() => ({
-    type: "FeatureCollection" as const,
-    features: bicicletares.map(bicicletar => ({
-      type: "Feature" as const,
-      properties: {
-        fid: bicicletar.fid,
-        name: bicicletar.name,
-        id_estacao: bicicletar.id_estacao,
-        vagas_atuais: bicicletar.vagas_atuais,
-        ano_inauguracao: bicicletar.ano_inauguracao,
-        bairro: bicicletar.bairro,
-        regional: bicicletar.regional,
-
-      },
-      geometry: bicicletar.geom,
-    })),
-  }), [bicicletares]);
-
   return (
     <div className="w-full h-full">
-      <MapView 
-        malhaData={filteredMalhaGeoJSON} 
-        zonas30Data={filteresZonas30GeoJSON}
-        bicicletarData={filteresBicletarGeoJSON}
-      />
+      {bicicletares && (
+        <MapView 
+          malhaData={filteredMalhaGeoJSON} 
+          zonas30Data={filteresZonas30GeoJSON}
+          bicicletarData={bicicletares} 
+          contagensData={contagens ?? undefined}
+        />
+      )}
     </div>
   );
 }
