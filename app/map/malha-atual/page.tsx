@@ -35,15 +35,33 @@ interface Bicicletar {
   ano_inauguracao: string;
   bairro: string;
   regional: string;
-  long: string;
-  lat: string;
   geom: any;
 }
+
+interface Contagem {
+  id: number;
+  lat: string;
+  lon: string;
+  local: string;
+  data: string | null;
+  turno: string;
+  inicio: string;
+  fim: string;
+  masculino: string | null;
+  feminino: string | null;
+  total: string;
+  ciclistas_por_min: string;
+  realizador: string;
+  ano: string;
+  geom: any;
+}
+
 
 export default function MapPage() {
   const [malhas, setMalhas] = useState<MalhaPDCI[]>([]);
   const [zonas30, setZonas30] = useState<Zonas30All[]>([]);
   const [bicicletares, setBicicletares] = useState<Bicicletar[]>([]);
+  const [contagens, setContagens] = useState<Contagem[]>([]); // novo
 
   const [filters, setFilters] = useState({
     tipologia: "",
@@ -52,22 +70,27 @@ export default function MapPage() {
     executado: "",
     ano: "",
     dentro_do_prazo: "",
+    contagemAno: "", 
   });
 
   useEffect(() => {
     async function fetchData() {
       try {
-        const [malhaRes, zonasRes, biciRes] = await Promise.all([
+        const [malhaRes, zonasRes, biciRes, contagemRes] = await Promise.all([
           fetch("http://localhost:3001/malha-pdci").then(res => res.json()),
           fetch("http://localhost:3001/zonas30").then(res => res.json()),
           fetch("http://localhost:3001/bicicletar").then(res => res.json()),
+          fetch("http://localhost:3001/contagem/contagens").then(res => res.json()), 
         ]);
 
         setMalhas(malhaRes);
         setZonas30(zonasRes);
         setBicicletares(biciRes);
+        setContagens(contagemRes);
+        
+        console.log("Bicicletar: ", biciRes);
+        console.log("Contagens:", contagemRes);
 
-        console.log("Dados Bicicletar:", biciRes);
       } catch (error) {
         console.error("Erro ao buscar dados da API REST:", error);
       }
@@ -137,8 +160,7 @@ export default function MapPage() {
         ano_inauguracao: bicicletar.ano_inauguracao,
         bairro: bicicletar.bairro,
         regional: bicicletar.regional,
-        long: bicicletar.long,
-        lat: bicicletar.lat,
+
       },
       geometry: bicicletar.geom,
     })),

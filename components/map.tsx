@@ -79,6 +79,7 @@ export function MapView({ malhaData, zonas30Data, bicicletarData }: Props) {
     map.on("load", () => {
       setMapLoaded(true);
 
+      // Add sources and layers (your existing code for raster-tiles, vector-tiles, vias, zonas30, bicicletar)
       map.addSource("raster-tiles", {
         type: "raster",
         tiles: [
@@ -158,6 +159,41 @@ export function MapView({ malhaData, zonas30Data, bicicletarData }: Props) {
           "circle-stroke-color": "#fff",
           "circle-stroke-width": 1,
         },
+      });
+
+      tipologias.forEach(({ key }) => {
+        map.on("mouseover", key, () => {
+          if (
+            mapRef.current &&
+            layersVisibility[key as keyof typeof layersVisibility]
+          ) {
+            mapRef.current.setPaintProperty(key, "line-width", [
+              "interpolate",
+              ["linear"],
+              ["zoom"],
+              10,
+              4,
+              16,
+              8,
+            ]);
+            mapRef.current.getCanvas().style.cursor = "pointer";
+          }
+        });
+
+        map.on("mouseout", key, () => {
+          if (mapRef.current) {
+            mapRef.current.setPaintProperty(key, "line-width", [
+              "interpolate",
+              ["linear"],
+              ["zoom"],
+              10,
+              2,
+              16,
+              5,
+            ]);
+            mapRef.current.getCanvas().style.cursor = "";
+          }
+        });
       });
 
       map.on(
@@ -285,85 +321,78 @@ export function MapView({ malhaData, zonas30Data, bicicletarData }: Props) {
                 Camadas Disponíveis
               </h3>
 
-              {layerConfigs.map(
-                ({ key, label, color, isArea, isPoint }) => (
-                  <label key={key} className="group cursor-pointer">
-                    <div className="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-50 transition-colors duration-200">
-                      <div className="relative">
-                        <input
-                          type="checkbox"
-                          checked={
-                            layersVisibility[
-                              key as keyof typeof layersVisibility
-                            ]
-                          }
-                          onChange={() =>
-                            setLayersVisibility((prev) => ({
-                              ...prev,
-                              [key]:
-                                !prev[key as keyof typeof layersVisibility],
-                            }))
-                          }
-                          className="sr-only"
-                        />
-                        <div
-                          className={`w-5 h-5 rounded border-2 flex items-center justify-center transition-all duration-200 ${
-                            layersVisibility[
-                              key as keyof typeof layersVisibility
-                            ]
-                              ? "bg-blue-500 border-blue-500"
-                              : "border-gray-300 group-hover:border-gray-400"
-                          }`}
-                        >
-                          {layersVisibility[
-                            key as keyof typeof layersVisibility
-                          ] && (
-                            <svg
-                              className="w-3 h-3 text-white"
-                              fill="currentColor"
-                              viewBox="0 0 20 20"
-                            >
-                              <path
-                                fillRule="evenodd"
-                                d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                                clipRule="evenodd"
-                              />
-                            </svg>
-                          )}
-                        </div>
-                      </div>
-
-                      <div className="flex items-center gap-2 flex-1">
-                        <div className="flex items-center gap-2">
-                          <div
-                            className={`w-4 h-4 border border-white shadow-sm ${
-                              isPoint
-                                ? "rounded-full"
-                                : isArea
-                                ? "rounded opacity-60"
-                                : "rounded-sm"
-                            }`}
-                            style={{ backgroundColor: color }}
-                          />
-                          <span className="text-sm font-medium text-gray-700">
-                            {label}
-                          </span>
-                        </div>
-                      </div>
-
-                      <div
-                        className={`opacity-0 group-hover:opacity-100 transition-opacity duration-200 ${
+              {layerConfigs.map(({ key, label, color, isArea, isPoint }) => (
+                <label key={key} className="group cursor-pointer">
+                  <div className="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-50 transition-colors duration-200">
+                    <div className="relative">
+                      <input
+                        type="checkbox"
+                        checked={
                           layersVisibility[key as keyof typeof layersVisibility]
-                            ? "opacity-100"
-                            : ""
+                        }
+                        onChange={() =>
+                          setLayersVisibility((prev) => ({
+                            ...prev,
+                            [key]: !prev[key as keyof typeof layersVisibility],
+                          }))
+                        }
+                        className="sr-only"
+                      />
+                      <div
+                        className={`w-5 h-5 rounded border-2 flex items-center justify-center transition-all duration-200 ${
+                          layersVisibility[key as keyof typeof layersVisibility]
+                            ? "bg-blue-500 border-blue-500"
+                            : "border-gray-300 group-hover:border-gray-400"
                         }`}
                       >
-                        <div className="w-2 h-2 bg-green-400 rounded-full"></div>
+                        {layersVisibility[
+                          key as keyof typeof layersVisibility
+                        ] && (
+                          <svg
+                            className="w-3 h-3 text-white"
+                            fill="currentColor"
+                            viewBox="0 0 20 20"
+                          >
+                            <path
+                              fillRule="evenodd"
+                              d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                              clipRule="evenodd"
+                            />
+                          </svg>
+                        )}
                       </div>
                     </div>
-                  </label>
-                )
-              )}
+
+                    <div className="flex items-center gap-2 flex-1">
+                      <div className="flex items-center gap-2">
+                        <div
+                          className={`w-4 h-4 border border-white shadow-sm ${
+                            isPoint
+                              ? "rounded-full"
+                              : isArea
+                              ? "rounded opacity-60"
+                              : "rounded-sm"
+                          }`}
+                          style={{ backgroundColor: color }}
+                        />
+                        <span className="text-sm font-medium text-gray-700">
+                          {label}
+                        </span>
+                      </div>
+                    </div>
+
+                    <div
+                      className={`opacity-0 group-hover:opacity-100 transition-opacity duration-200 ${
+                        layersVisibility[key as keyof typeof layersVisibility]
+                          ? "opacity-100"
+                          : ""
+                      }`}
+                    >
+                      <div className="w-2 h-2 bg-green-400 rounded-full"></div>
+                    </div>
+                  </div>
+                </label>
+              ))}
             </div>
 
             <div className="p-4 bg-gray-50/50 rounded-b-2xl">

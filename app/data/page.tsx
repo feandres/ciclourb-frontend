@@ -5,6 +5,134 @@ import Hero from "@/components/hero";
 import EvolucaoMalhaChart from "@/components/graficoMalha";
 import EvolucaoMalhaAnoChart from "@/components/graficoMalhaAno";
 import TabelaContagem from "@/components/tabelaContagem";
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+  PieChart,
+  Pie,
+  Cell,
+} from "recharts";
+
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+
+const COLORS = [
+  "#4D3A08",
+  "#79693F",
+  "#D6C9A3",
+  "#FFF8E5",
+  "#FFFBF0",
+  "#403500",
+];
+
+const timeUsingBike = [
+  { name: "Menos de 6 meses", value: 9.9 },
+  { name: "Entre 6 meses e 1 ano", value: 6.6 },
+  { name: "Entre 1 ano e 2 anos", value: 7.6 },
+  { name: "Entre 2 e 3 anos", value: 7.4 },
+  { name: "Entre 4 e 5 anos", value: 4.5 },
+  { name: "Mais de 5 anos", value: 4.3 },
+];
+
+const daysPerWeek = [
+  { name: "1 dia", value: 0.8 },
+  { name: "2 dias", value: 2.5 },
+  { name: "3 dias", value: 5.1 },
+  { name: "4 dias", value: 2.7 },
+  { name: "5 dias", value: 21.2 },
+  { name: "6 dias", value: 22.6 },
+  { name: "7 dias", value: 45 },
+];
+
+const destinations = [
+  { name: "Trabalho", value: 95.5 },
+  { name: "Estudo", value: 78.9 },
+  { name: "Compras", value: 89.3 },
+  { name: "Lazer/Social", value: 88.1 },
+  { name: "Estação Intermodal", value: 76.4 },
+];
+
+const tripTime = [
+  { name: "Até 15 minutos", value: 11.3 },
+  { name: "Mais de 15 até 30 minutos", value: 50.5 },
+  { name: "Mais de 30 minutos", value: 38.2 },
+];
+
+const motivations = [
+  { name: "Custo", value: 9.7 },
+  { name: "Praticidade", value: 60.6 },
+  { name: "Saúde", value: 25 },
+  { name: "Meio Ambiente", value: 0.2 },
+  { name: "Outros", value: 4.5 },
+];
+
+const improvements = [
+  { name: "Educação no trânsito", value: 28.3 },
+  { name: "Segurança pública", value: 14 },
+  { name: "Arborização", value: 3.7 },
+  { name: "Infraestrutura", value: 50.1 },
+  { name: "Outros", value: 3.9 },
+];
+
+const combinedTransport = [
+  { name: "Sim", value: 23 },
+  { name: "Não", value: 77 },
+];
+
+const theft = [
+  { name: "Sim", value: 36.6 },
+  { name: "Não", value: 63.4 },
+];
+
+const harassment = [
+  { name: "Sim", value: 36.7 },
+  { name: "Não", value: 63.3 },
+];
+
+const incidents = [
+  { name: "Sim", value: 25.5 },
+  { name: "Não", value: 74.5 },
+];
+
+const income = [
+  { name: "Sem Rendimento", value: 1.6 },
+  { name: "Até 1 S.M.", value: 32 },
+  { name: "Entre 1 e 2 S.M.", value: 34.9 },
+  { name: "Entre 2 e 5 S.M.", value: 21.2 },
+  { name: "Acima de 5 S.M.", value: 1.6 },
+  { name: "Não sabe/não respondeu", value: 8.8 },
+];
+
+const education = [
+  { name: "Sem instrução", value: 8.2 },
+  { name: "Ensino Fundamental", value: 31.4 },
+  { name: "Ensino Médio", value: 46 },
+  { name: "Ensino Superior", value: 12.7 },
+  { name: "Pós Graduação", value: 1.8 },
+  { name: "Não sabe/não respondeu", value: 0 },
+];
+
+const ageGroups = [
+  { name: "Até 19 anos", value: 7.4 },
+  { name: "20 a 29 anos", value: 20.1 },
+  { name: "30 a 39 anos", value: 21.4 },
+  { name: "40 a 49 anos", value: 21.8 },
+  { name: "50 a 59 anos", value: 18.7 },
+  { name: "60 anos ou mais", value: 10.5 },
+];
+
+const race = [
+  { name: "Branca", value: 20.7 },
+  { name: "Preta", value: 21.8 },
+  { name: "Parda", value: 55.9 },
+  { name: "Indígena", value: 0.4 },
+  { name: "Amarela", value: 1.2 },
+  { name: "Não sabe/não respondeu", value: 0 },
+];
 
 interface Indicadores {
   [key: string]: number;
@@ -81,10 +209,16 @@ export default function DataPage() {
               { href: "#contagens", text: "Contagens" },
               { href: "#analise", text: "Análise PDCI" },
               { href: "#perfil", text: "Perfil Nacional do Ciclista" },
+              {
+                href: "https://mobilidade.fortaleza.ce.gov.br/images/pdf/PDCI_FORTALEZA.pdf",
+                text: "Download Plano Diretor",
+                download: true,
+              },
             ].map((item) => (
               <a
                 key={item.href}
                 href={item.href}
+                download={item.download}
                 className="bg-white/80 hover:bg-white text-[#79693F] hover:text-[#4D3A08] px-4 py-2 rounded-full transition-all duration-300 hover:shadow-md hover:scale-105 border border-[#d6c9a3]/30 hover:border-[#79693F]/50"
               >
                 {item.text}
@@ -249,7 +383,7 @@ export default function DataPage() {
               </h2>
             </div>
             <div className="bg-white/95 backdrop-blur-sm rounded-3xl shadow-2xl p-6 sm:p-8 border-2 border-[#d6c9a3]/40 hover:shadow-3xl transition-shadow">
-              <EvolucaoMalhaChart  />
+              <EvolucaoMalhaChart />
             </div>
           </div>
         </div>
@@ -330,7 +464,7 @@ export default function DataPage() {
               </div>
             </div>
 
-            <p className="text-[#79693F] leading-relaxed text-justify text-base sm:text-lg font-medium">
+            <p className="text-[#79693F] leading-relaxed text-justify text-base sm:text-lg font-medium mb-10">
               O{" "}
               <span className="font-bold text-[#4D3A08]">
                 Plano Cicloviário de Fortaleza
@@ -347,7 +481,518 @@ export default function DataPage() {
               plano, bem como de suas alterações e eventuais incongruências, por
               meio da coleta de dados e da elaboração de análises técnicas.
             </p>
+
+            <div className="overflow-x-auto">
+              <table className="w-full text-left border-collapse">
+                <thead>
+                  <tr className="bg-[#FFF8E5] border-b-2 border-[#d6c9a3]">
+                    <th className="px-4 py-2 text-[#4D3A08] font-bold">Tipo</th>
+                    <th className="px-4 py-2 text-[#4D3A08] font-bold">
+                      Anterior ao PDCI
+                    </th>
+                    <th className="px-4 py-2 text-[#4D3A08] font-bold">
+                      Previsto conforme PDCI
+                    </th>
+                    <th className="px-4 py-2 text-[#4D3A08] font-bold">
+                      Executado conforme PDCI
+                    </th>
+                    <th className="px-4 py-2 text-[#4D3A08] font-bold">
+                      Existente
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {[
+                    {
+                      tipo: "Ciclofaixa",
+                      anterior: 10.9,
+                      previsto: 114.7,
+                      executado: 77.7,
+                      existente: 318.7,
+                    },
+                    {
+                      tipo: "Ciclovia",
+                      anterior: 74.7,
+                      previsto: 206,
+                      executado: 130.7,
+                      existente: 158.9,
+                    },
+                    {
+                      tipo: "Ciclorrota",
+                      anterior: 0,
+                      previsto: 122,
+                      executado: 15.5,
+                      existente: 16.5,
+                    },
+                    {
+                      tipo: "Passeio Compartilhado",
+                      anterior: 0,
+                      previsto: 4.3,
+                      executado: 3.3,
+                      existente: 7.7,
+                    },
+                  ].map((row) => (
+                    <tr key={row.tipo} className="border-b border-[#d6c9a3]">
+                      <td className="px-4 py-2 font-semibold text-[#4D3A08]">
+                        {row.tipo}
+                      </td>
+                      <td className="px-4 py-2">{row.anterior} km</td>
+                      <td className="px-4 py-2">{row.previsto} km</td>
+                      <td className="px-4 py-2">{row.executado} km</td>
+                      <td className="px-4 py-2">{row.existente} km</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
+        </div>
+      </section>
+
+      <section
+        id="perfil"
+        className="py-12 sm:py-20 px-4 sm:px-6 bg-gradient-to-b from-[#FFFBF0] to-[#FFF8E5]"
+      >
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-6 text-[#4D3A08] tracking-tight">
+              Pesquisa Perfil do Ciclista
+            </h2>
+            <div className="w-32 h-1 bg-gradient-to-r from-[#79693F] to-[#4D3A08] mx-auto rounded-full mt-6"></div>
+          </div>
+
+          <div className="bg-white/90 backdrop-blur-sm rounded-3xl p-8 sm:p-12 shadow-2xl border-2 border-[#d6c9a3]/40 hover:shadow-3xl transition-shadow">
+            <p className="text-[#79693F] leading-relaxed text-justify text-base sm:text-lg font-medium">
+              A{" "}
+              <span className="font-bold text-[#4D3A08]">
+                Pesquisa Perfil do Ciclista
+              </span>{" "}
+              , realizada pela Transporte Ativo, pelo Laboratório de Mobilidade
+              Sustentável (LabMob/UFRJ) e pelo Observatório das Metrópoles, e
+              aplicada em Fortaleza pela Prefeitura Municipal, tem como
+              propósito principal a execução de um levantamento de campo
+              destinado a identificar motivações, hábitos de deslocamento e
+              características sociodemográficas dos ciclistas no contexto
+              urbano. Os dados obtidos e analisados configuram-se como insumos
+              fundamentais para orientar a formulação de políticas públicas e
+              demais iniciativas relacionadas ao tema, favorecendo a promoção do
+              transporte cicloviário na cidade com base em evidências e
+              informações qualificadas.
+            </p>
+          </div>
+        </div>
+      </section>
+      <section className="w-full px-4 sm:px-6 py-12 sm:py-16 bg-gradient-to-b from-[#FFFBF0] to-[#FFF8E5]">
+        <div className="max-w-7xl mx-auto space-y-16">
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-2xl font-bold text-[#4D3A08]">
+                Há quanto tempo utiliza a bicicleta como meio de transporte
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <ResponsiveContainer width="100%" height={400}>
+                <BarChart data={timeUsingBike}>
+                  <XAxis dataKey="name" />
+                  <YAxis />
+                  <Tooltip />
+                  <Legend />
+                  <Bar dataKey="value" fill="#4D3A08" />
+                </BarChart>
+              </ResponsiveContainer>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-2xl font-bold text-[#4D3A08]">
+                Quantos dias da semana costuma utilizar a bicicleta
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <ResponsiveContainer width="100%" height={400}>
+                <BarChart data={daysPerWeek}>
+                  <XAxis dataKey="name" />
+                  <YAxis />
+                  <Tooltip />
+                  <Legend />
+                  <Bar dataKey="value" fill="#79693F" />
+                </BarChart>
+              </ResponsiveContainer>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-2xl font-bold text-[#4D3A08]">
+                Para quais destinos utiliza a bicicleta
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <ResponsiveContainer width="100%" height={400}>
+                <BarChart data={destinations}>
+                  <XAxis dataKey="name" />
+                  <YAxis />
+                  <Tooltip />
+                  <Legend />
+                  <Bar dataKey="value" fill="#D6C9A3" />
+                </BarChart>
+              </ResponsiveContainer>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-2xl font-bold text-[#4D3A08]">
+                Tempo no trajeto mais frequente
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <ResponsiveContainer width="100%" height={400}>
+                <PieChart>
+                  <Pie
+                    data={tripTime}
+                    dataKey="value"
+                    nameKey="name"
+                    cx="50%"
+                    cy="50%"
+                    outerRadius={150}
+                    fill="#8884d8"
+                    label
+                  >
+                    {tripTime.map((entry, index) => (
+                      <Cell
+                        key={`cell-${index}`}
+                        fill={COLORS[index % COLORS.length]}
+                      />
+                    ))}
+                  </Pie>
+                  <Tooltip />
+                </PieChart>
+              </ResponsiveContainer>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-2xl font-bold text-[#4D3A08]">
+                Principal motivação para utilizar a bicicleta
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <ResponsiveContainer width="100%" height={400}>
+                <PieChart>
+                  <Pie
+                    data={motivations}
+                    dataKey="value"
+                    nameKey="name"
+                    cx="50%"
+                    cy="50%"
+                    outerRadius={150}
+                    fill="#8884d8"
+                    label
+                  >
+                    {motivations.map((entry, index) => (
+                      <Cell
+                        key={`cell-${index}`}
+                        fill={COLORS[index % COLORS.length]}
+                      />
+                    ))}
+                  </Pie>
+                  <Tooltip />
+                </PieChart>
+              </ResponsiveContainer>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-2xl font-bold text-[#4D3A08]">
+                O que faria utilizar a bicicleta com mais frequência
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <ResponsiveContainer width="100%" height={400}>
+                <PieChart>
+                  <Pie
+                    data={improvements}
+                    dataKey="value"
+                    nameKey="name"
+                    cx="50%"
+                    cy="50%"
+                    outerRadius={150}
+                    fill="#8884d8"
+                    label
+                  >
+                    {improvements.map((entry, index) => (
+                      <Cell
+                        key={`cell-${index}`}
+                        fill={COLORS[index % COLORS.length]}
+                      />
+                    ))}
+                  </Pie>
+                  <Tooltip />
+                </PieChart>
+              </ResponsiveContainer>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-2xl font-bold text-[#4D3A08]">
+                Você já teve sua bicicleta, ou partes dela, furtada ou roubada?
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <ResponsiveContainer width="100%" height={400}>
+                <PieChart>
+                  <Pie
+                    data={theft}
+                    dataKey="value"
+                    nameKey="name"
+                    cx="50%"
+                    cy="50%"
+                    outerRadius={150}
+                    fill="#8884d8"
+                    label
+                  >
+                    {theft.map((entry, index) => (
+                      <Cell
+                        key={`cell-${index}`}
+                        fill={COLORS[index % COLORS.length]}
+                      />
+                    ))}
+                  </Pie>
+                  <Tooltip />
+                </PieChart>
+              </ResponsiveContainer>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-2xl font-bold text-[#4D3A08]">
+                Você já sofreu algum tipo de importunação ou assédio enquanto
+                pedalava?
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <ResponsiveContainer width="100%" height={400}>
+                <PieChart>
+                  <Pie
+                    data={harassment}
+                    dataKey="value"
+                    nameKey="name"
+                    cx="50%"
+                    cy="50%"
+                    outerRadius={150}
+                    fill="#8884d8"
+                    label
+                  >
+                    {harassment.map((entry, index) => (
+                      <Cell
+                        key={`cell-${index}`}
+                        fill={COLORS[index % COLORS.length]}
+                      />
+                    ))}
+                  </Pie>
+                  <Tooltip />
+                </PieChart>
+              </ResponsiveContainer>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-2xl font-bold text-[#4D3A08]">
+                Nos últimos dois anos sofreu ou esteve envolvido em alguma
+                ocorrência de trânsito enquanto pedalava?
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <ResponsiveContainer width="100%" height={400}>
+                <PieChart>
+                  <Pie
+                    data={incidents}
+                    dataKey="value"
+                    nameKey="name"
+                    cx="50%"
+                    cy="50%"
+                    outerRadius={150}
+                    fill="#8884d8"
+                    label
+                  >
+                    {incidents.map((entry, index) => (
+                      <Cell
+                        key={`cell-${index}`}
+                        fill={COLORS[index % COLORS.length]}
+                      />
+                    ))}
+                  </Pie>
+                  <Tooltip />
+                </PieChart>
+              </ResponsiveContainer>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-2xl font-bold text-[#4D3A08]">
+                Utiliza a bicicleta em combinação com outro modo de transporte
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <ResponsiveContainer width="100%" height={400}>
+                <PieChart>
+                  <Pie
+                    data={combinedTransport}
+                    dataKey="value"
+                    nameKey="name"
+                    cx="50%"
+                    cy="50%"
+                    outerRadius={150}
+                    fill="#8884d8"
+                    label
+                  >
+                    {combinedTransport.map((entry, index) => (
+                      <Cell
+                        key={`cell-${index}`}
+                        fill={COLORS[index % COLORS.length]}
+                      />
+                    ))}
+                  </Pie>
+                  <Tooltip />
+                </PieChart>
+              </ResponsiveContainer>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-2xl font-bold text-[#4D3A08]">
+                Experiências Negativas
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <ResponsiveContainer width="100%" height={400}>
+                <BarChart
+                  data={[
+                    { name: "Furto/Roubo", value: 36.6 },
+                    { name: "Assédio", value: 36.7 },
+                    { name: "Ocorrência de Trânsito", value: 25.5 },
+                  ]}
+                >
+                  <XAxis dataKey="name" />
+                  <YAxis />
+                  <Tooltip />
+                  <Legend />
+                  <Bar dataKey="value" fill="#403500" />
+                </BarChart>
+              </ResponsiveContainer>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-2xl font-bold text-[#4D3A08]">
+                Renda Mensal
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <ResponsiveContainer width="100%" height={400}>
+                <PieChart>
+                  <Pie
+                    data={income}
+                    dataKey="value"
+                    nameKey="name"
+                    cx="50%"
+                    cy="50%"
+                    outerRadius={150}
+                    fill="#8884d8"
+                    label
+                  >
+                    {income.map((entry, index) => (
+                      <Cell
+                        key={`cell-${index}`}
+                        fill={COLORS[index % COLORS.length]}
+                      />
+                    ))}
+                  </Pie>
+                  <Tooltip />
+                </PieChart>
+              </ResponsiveContainer>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-2xl font-bold text-[#4D3A08]">
+                Escolaridade
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <ResponsiveContainer width="100%" height={400}>
+                <BarChart data={education}>
+                  <XAxis dataKey="name" />
+                  <YAxis />
+                  <Tooltip />
+                  <Legend />
+                  <Bar dataKey="value" fill="#4D3A08" />
+                </BarChart>
+              </ResponsiveContainer>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-2xl font-bold text-[#4D3A08]">
+                Faixa Etária
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <ResponsiveContainer width="100%" height={400}>
+                <BarChart data={ageGroups}>
+                  <XAxis dataKey="name" />
+                  <YAxis />
+                  <Tooltip />
+                  <Legend />
+                  <Bar dataKey="value" fill="#79693F" />
+                </BarChart>
+              </ResponsiveContainer>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-2xl font-bold text-[#4D3A08]">
+                Cor ou Raça
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <ResponsiveContainer width="100%" height={400}>
+                <PieChart>
+                  <Pie
+                    data={race}
+                    dataKey="value"
+                    nameKey="name"
+                    cx="50%"
+                    cy="50%"
+                    outerRadius={150}
+                    fill="#8884d8"
+                    label
+                  >
+                    {race.map((entry, index) => (
+                      <Cell
+                        key={`cell-${index}`}
+                        fill={COLORS[index % COLORS.length]}
+                      />
+                    ))}
+                  </Pie>
+                  <Tooltip />
+                </PieChart>
+              </ResponsiveContainer>
+            </CardContent>
+          </Card>
         </div>
       </section>
     </>
