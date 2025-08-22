@@ -55,7 +55,7 @@ export default function TabelaContagem() {
     if (realizador) params.append("realizador", realizador);
 
     try {
-      const res = await fetch(`http://localhost:3001/contagem?${params.toString()}`);
+      const res = await fetch(`${process.env.API_URL}/contagem?${params.toString()}`);
       const json = await res.json();
       setData(json.data ?? []);
       setTotal(json.total ?? 0);

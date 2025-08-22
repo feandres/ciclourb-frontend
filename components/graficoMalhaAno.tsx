@@ -22,7 +22,7 @@ export default function EvolucaoMalhaAnoChart() {
   useEffect(() => {
     async function fetchData() {
       try {
-        const res = await fetch("http://localhost:3001/dados/evolucao-malha-ano");
+        const res = await fetch(`${process.env.API_URL}/dados/evolucao-malha-ano`);
         const json = await res.json();
 
         const items: Item[] = json.map((i: any) => ({

@@ -24,9 +24,8 @@ export default function EvolucaoMalhaChart() {
   useEffect(() => {
     async function fetchData() {
       try {
-        const res = await fetch(
-          "http://localhost:3001/dados/evolucao-malha-tipologia"
-        );
+
+        const res = await fetch( `${process.env.API_URL}/dados/evolucao-malha-tipologia`);
         const json: Item[] = await res.json();
 
         const items = json.map((i) => ({
