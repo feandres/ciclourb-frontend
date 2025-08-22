@@ -22,14 +22,16 @@ export default function MapPage() {
   useEffect(() => {
     async function fetchData() {
       try {
-        const [malhaRes, zonasRes, contRes] = await Promise.all([
+        const [malhaRes, zonasRes, biciRes, contRes] = await Promise.all([
           fetch(`https://ciclourb-backend.vercel.app/api/malha-pdci`).then(res => res.json()),
           fetch(`https://ciclourb-backend.vercel.app/api/zonas30`).then(res => res.json()),
+          fetch(`https://ciclourb-backend.vercel.app/api/bicicletar`).then(res => res.json()),
           fetch(`https://ciclourb-backend.vercel.app/api/contagem/contagens`).then(res => res.json()),
         ]);
 
         setMalhas(malhaRes);
         setZonas30(zonasRes);
+        setBicicletares(biciRes);
         setContagens(contRes); 
 
         console.log("GeoJSON Contagens:", contRes);
