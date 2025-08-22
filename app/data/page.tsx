@@ -139,7 +139,7 @@ interface Indicadores {
 }
 
 async function fetchIndicadoresREST(): Promise<Indicadores> {
-  const res = await fetch("http://localhost:3001/dados/indicadores");
+  const res = await fetch(`${process.env.API_URL}/dados/indicadores`); 
   const indicadoresRaw = await res.json();
 
   const kmIndicadores: Record<string, number> = {};
