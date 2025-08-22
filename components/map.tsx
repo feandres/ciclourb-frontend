@@ -10,9 +10,39 @@ import MalhaPopup from "./malhaPopup";
 interface Props {
   malhaData: FeatureCollection<Geometry, GeoJsonProperties>;
   zonas30Data: FeatureCollection<Geometry, GeoJsonProperties>;
+  bicicletarData: FeatureCollection<Geometry, GeoJsonProperties>;
   contagensData?: FeatureCollection<Geometry, GeoJsonProperties>;
 }
 
+const BicicletarPopup = ({ props }: { props: any }) => {
+  const vagas = props.vagas_atuais || props.vagas || props.capacidade || 0;
+  const nome = props.nome || props.name || props.station_name || "Estação";
+  const endereco = props.endereco || props.address || props.location || "";
+
+  return (
+    <div className="p-4 min-w-64 max-w-80">
+      <div className="flex items-center gap-2 mb-3">
+        <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+        <h3 className="font-bold text-gray-800 text-lg">{nome}</h3>
+      </div>
+
+      {endereco && (
+        <div className="mb-3">
+          <p className="text-sm text-gray-600">{endereco}</p>
+        </div>
+      )}
+
+      <div className="bg-green-50 p-4 rounded-lg text-center">
+        <div className="text-3xl font-bold text-green-600">{vagas}</div>
+        <div className="text-sm text-green-700 font-medium">Total de Vagas</div>
+      </div>
+
+      <div className="mt-3 pt-3 border-t border-gray-200">
+        <p className="text-xs text-gray-500">Clique no mapa para fechar</p>
+      </div>
+    </div>
+  );
+};
 
 const ContagemPopup = ({ props }: { props: any }) => {
   const ciclistas_por_min = props.ciclistas_por_min || 0;
@@ -108,6 +138,7 @@ export function MapView({
       key: "contagem",
       label: "Contagem",
       color: "#34A6F4",
+      isPoint: true,
     },
   ];
 
@@ -208,7 +239,8 @@ export function MapView({
         paint: { "fill-color": "#ffb703", "fill-opacity": 0.3 },
       });
 
-    
+
+
       map.addSource("contagem", {
         type: "geojson",
         data: contagensData ?? { type: "FeatureCollection", features: [] },
@@ -273,7 +305,22 @@ export function MapView({
         }
       );
 
-    
+      // Click event para pontos do Bicicletar
+      map.on("click", "bicicletar", (e) => {
+        if (!e.features) return;
+        const props = e.features[0].properties;
+        const popupNode = document.createElement("div");
+        createRoot(popupNode).render(<BicicletarPopup props={props} />);
+        new maplibregl.Popup({
+          closeOnClick: true,
+          closeButton: true,
+          maxWidth: "350px",
+        })
+          .setLngLat(e.lngLat)
+          .setDOMContent(popupNode)
+          .addTo(map);
+      });
+
       map.on("click", "contagem", (e) => {
         if (!e.features) return;
         const props = e.features[0].properties;
@@ -321,6 +368,24 @@ export function MapView({
           "visibility",
           visible ? "visible" : "none"
         );
+      }
+
+      // Para o Bicicletar, também controlar as camadas relacionadas
+      if (layer === "bicicletar") {
+        if (mapRef.current?.getLayer("bicicletar-shadow")) {
+          mapRef.current.setLayoutProperty(
+            "bicicletar-shadow",
+            "visibility",
+            visible ? "visible" : "none"
+          );
+        }
+        if (mapRef.current?.getLayer("bicicletar-label")) {
+          mapRef.current.setLayoutProperty(
+            "bicicletar-label",
+            "visibility",
+            visible ? "visible" : "none"
+          );
+        }
       }
     });
   }, [layersVisibility, mapLoaded]);
@@ -399,7 +464,7 @@ export function MapView({
                 Camadas Disponíveis
               </h3>
 
-              {layerConfigs.map(({ key, label, color, isArea }) => (
+              {layerConfigs.map(({ key, label, color, isArea, isPoint }) => (
                 <label key={key} className="group cursor-pointer">
                   <div className="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-50 transition-colors duration-200">
                     <div className="relative">
@@ -438,6 +503,24 @@ export function MapView({
                             />
                           </svg>
                         )}
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-2 flex-1">
+                      <div className="flex items-center gap-2">
+                        <div
+                          className={`w-4 h-4 border border-white shadow-sm ${
+                            isPoint
+                              ? "rounded-full"
+                              : isArea
+                              ? "rounded opacity-60"
+                              : "rounded-sm"
+                          }`}
+                          style={{ backgroundColor: color }}
+                        />
+                        <span className="text-sm font-medium text-gray-700">
+                          {label}
+                        </span>
                       </div>
                     </div>
 
