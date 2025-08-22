@@ -21,8 +21,8 @@ export function Navbar() {
     {
       label: "Mapas",
       subItems: [
+        { href: "/map/pdci", label: "Malha PDCI" },
         { href: "/map/malha-atual", label: "Malha Atual" },
-        { href: "/map/pdci", label: "PDCI" },
       ],
     },
   ];

@@ -161,6 +161,12 @@ export function MapView({
       style: { version: 8, sources: {}, layers: [] },
       center: [-38.5263, -3.7418],
       zoom: 13,
+      minZoom: 11,
+      maxZoom: 17,
+      maxBounds: [
+        [-38.65, -3.9],
+        [-38.35, -3.65],
+      ],
     });
 
     mapRef.current = map;
@@ -168,7 +174,6 @@ export function MapView({
     map.on("load", () => {
       setMapLoaded(true);
 
-      // Add sources and layers (your existing code for raster-tiles, vector-tiles, vias, zonas30, bicicletar)
       map.addSource("raster-tiles", {
         type: "raster",
         tiles: [
@@ -176,6 +181,7 @@ export function MapView({
         ],
         tileSize: 256,
       });
+
       map.addLayer({
         id: "raster-layer",
         type: "raster",
@@ -185,9 +191,12 @@ export function MapView({
 
       map.addSource("vector-tiles", {
         type: "raster",
-        tiles: ["https://tile.openstreetmap.org/{z}/{x}/{y}.png"],
+        tiles: [
+          "https://cartodb-basemaps-a.global.ssl.fastly.net/light_nolabels/{z}/{x}/{y}.png",
+        ],
         tileSize: 256,
       });
+
       map.addLayer({
         id: "vector-layer",
         type: "raster",
