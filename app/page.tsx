@@ -1,6 +1,11 @@
 import Hero from "@/components/hero";
 import Image from "next/image";
-import { FaGithub, FaInstagram, FaLinkedin } from "react-icons/fa";
+import {
+  FaGithub,
+  FaInstagram,
+  FaLinkedin,
+  FaAddressCard,
+} from "react-icons/fa";
 
 export default function HomePage() {
   const equipe = [
@@ -9,16 +14,34 @@ export default function HomePage() {
       cargo: "Estudante de Arquitetura e Urbanismo",
       foto: "/mateus.png",
       redes: [
-        { icone: <FaInstagram />, url: "https://instagram.com" },
-        { icone: <FaLinkedin />, url: "https://linkedin.com" },
+        { icone: <FaInstagram />, url: "https://instagram.com/mateuss.bz" },
+        {
+          icone: <FaLinkedin />,
+          url: "http://lattes.cnpq.br/3871055698784696",
+        },
+        {
+          icone: <FaAddressCard />,
+          url: "https://lattes.cnpq.br/3827859681608797",
+        },
       ],
     },
     {
       nome: "Beatriz",
       cargo: "Estudante de Arquitetura e Urbanismo",
       foto: "/beatriz.png",
-      redes: [{ icone: <FaLinkedin />, url: "https://linkedin.com" }],
+      redes: [
+        {
+          icone: <FaLinkedin />,
+          url: "https://www.linkedin.com/in/beatriz-balduino-a9998224b",
+        },
+        { icone: <FaInstagram />, url: "https://instagram.com/bia_bcb0" },
+        {
+          icone: <FaAddressCard />,
+          url: "https://lattes.cnpq.br/3827859681608797",
+        },
+      ],
     },
+
     {
       nome: "Felipe Andrès",
       cargo: "Desenvolvedor de Software",
@@ -33,8 +56,11 @@ export default function HomePage() {
       cargo: "Desenvolvedor de Software",
       foto: "/marcos.png",
       redes: [
-        { icone: <FaGithub />, url: "https://github.com" },
-        { icone: <FaInstagram />, url: "https://instagram.com" },
+        { icone: <FaGithub />, url: "https://github.com/MarkiNzera" },
+        {
+          icone: <FaLinkedin />,
+          url: "https://www.linkedin.com/in/marcos-vinicius-mesquita-estrela-654988162?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=ios_app",
+        },
       ],
     },
   ];

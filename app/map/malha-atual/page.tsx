@@ -34,7 +34,7 @@ export default function MapPage() {
         setBicicletares(biciRes);
         setContagens(contRes); 
 
-        console.log("GeoJSON Bicicletar:", contRes);
+        console.log("GeoJSON Contagens:", contRes);
       } catch (error) {
         console.error("Erro ao buscar dados da API REST:", error);
       }

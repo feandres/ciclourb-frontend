@@ -29,11 +29,9 @@ type Contagem = {
   geom: string;
 };
 
-type TabelaContagemProps = {
-  apiUrl: string;
-};
 
-export default function TabelaContagem({ apiUrl }: TabelaContagemProps) {
+
+export default function TabelaContagem() {
   const [data, setData] = useState<Contagem[]>([]);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
@@ -57,7 +55,7 @@ export default function TabelaContagem({ apiUrl }: TabelaContagemProps) {
     if (realizador) params.append("realizador", realizador);
 
     try {
-      const res = await fetch(`${apiUrl}?${params.toString()}`);
+      const res = await fetch(`http://localhost:3001/contagem?${params.toString()}`);
       const json = await res.json();
       setData(json.data ?? []);
       setTotal(json.total ?? 0);
@@ -74,7 +72,7 @@ export default function TabelaContagem({ apiUrl }: TabelaContagemProps) {
 
   useEffect(() => {
     fetchData();
-  }, [page, ano, turno, realizador, apiUrl]);
+  }, [page, ano, turno, realizador]);
 
   return (
     <div className="space-y-6">

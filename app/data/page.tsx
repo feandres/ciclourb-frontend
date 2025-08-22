@@ -437,7 +437,7 @@ export default function DataPage() {
               </h3>
             </div>
             <div className="p-6 sm:p-8 overflow-x-auto">
-              <TabelaContagem apiUrl="http://localhost:3001/contagem" />{" "}
+              <TabelaContagem  />{" "}
             </div>
           </div>
         </div>
