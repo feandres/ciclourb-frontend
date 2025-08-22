@@ -142,8 +142,6 @@ async function fetchIndicadoresREST(): Promise<Indicadores> {
   const res = await fetch(`${process.env.API_URL}/dados/indicadores`); 
   const indicadoresRaw = await res.json();
 
-  console.log(res);
-
   const kmIndicadores: Record<string, number> = {};
   indicadoresRaw.forEach(({ nome, valor, unidade }: any) => {
     if (unidade === "m") {
