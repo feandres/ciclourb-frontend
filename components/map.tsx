@@ -94,6 +94,7 @@ const ContagemPopup = ({ props }: { props: any }) => {
 export function MapView({
   malhaData,
   zonas30Data,
+  bicicletarData,
   contagensData,
 }: Props) {
   const mapContainer = useRef<HTMLDivElement>(null);
@@ -109,6 +110,7 @@ export function MapView({
     ciclorrota: true,
     passeio: true,
     zonas30: true,
+    bicicletar: true,
     contagem: true,
   });
 
@@ -135,10 +137,15 @@ export function MapView({
       isArea: true,
     },
     {
+      key: "bicicletar",
+      label: "Bicicletar",
+      color: "#10b981",
+      isPoint: true,
+    },
+    {
       key: "contagem",
       label: "Contagem",
       color: "#34A6F4",
-      isPoint: true,
     },
   ];
 
@@ -239,7 +246,153 @@ export function MapView({
         paint: { "fill-color": "#ffb703", "fill-opacity": 0.3 },
       });
 
+      map.addSource("bicicletar", { type: "geojson", data: bicicletarData });
 
+      map.addLayer({
+        id: "bicicletar-shadow",
+        type: "circle",
+        source: "bicicletar",
+        paint: {
+          "circle-color": "#10b981",
+          "circle-opacity": 0.2,
+          "circle-radius": [
+            "interpolate",
+            ["linear"],
+            ["zoom"],
+            10,
+            [
+              "interpolate",
+              ["linear"],
+              [
+                "coalesce",
+                ["get", "vagas_atuais"],
+                ["get", "vagas"],
+                ["get", "capacidade"],
+                10,
+              ],
+              1,
+              4,
+              50,
+              8,
+            ],
+            16,
+            [
+              "interpolate",
+              ["linear"],
+              [
+                "coalesce",
+                ["get", "vagas_atuais"],
+                ["get", "vagas"],
+                ["get", "capacidade"],
+                10,
+              ],
+              1,
+              8,
+              50,
+              14,
+            ],
+          ],
+          "circle-stroke-width": 0,
+        },
+      });
+
+      map.addLayer({
+        id: "bicicletar",
+        type: "circle",
+        source: "bicicletar",
+        paint: {
+          "circle-color": [
+            "interpolate",
+            ["linear"],
+            [
+              "coalesce",
+              ["get", "vagas_atuais"],
+              ["get", "vagas"],
+              ["get", "capacidade"],
+              10,
+            ],
+            1,
+            "#16a34a", // Verde escuro para poucas vagas
+            20,
+            "#22c55e", // Verde médio
+            40,
+            "#4ade80", // Verde claro para muitas vagas
+          ],
+          "circle-radius": [
+            "interpolate",
+            ["linear"],
+            ["zoom"],
+            10,
+            [
+              "interpolate",
+              ["linear"],
+              [
+                "coalesce",
+                ["get", "vagas_atuais"],
+                ["get", "vagas"],
+                ["get", "capacidade"],
+                10,
+              ],
+              1,
+              3, // mínimo 3px para 1 vaga
+              50,
+              6, // máximo 6px para 50+ vagas
+            ],
+            16,
+            [
+              "interpolate",
+              ["linear"],
+              [
+                "coalesce",
+                ["get", "vagas_atuais"],
+                ["get", "vagas"],
+                ["get", "capacidade"],
+                10,
+              ],
+              1,
+              6, // mínimo 6px para 1 vaga
+              50,
+              11, // máximo 11px para 50+ vagas
+            ],
+          ],
+          "circle-stroke-color": "#ffffff",
+          "circle-stroke-width": [
+            "interpolate",
+            ["linear"],
+            ["zoom"],
+            10,
+            0.75,
+            16,
+            1.25,
+          ],
+          "circle-opacity": 0.9,
+        },
+      });
+
+      // Camada de ícone/número para mostrar quantidade de vagas
+      map.addLayer({
+        id: "bicicletar-label",
+        type: "symbol",
+        source: "bicicletar",
+        layout: {
+          "text-field": [
+            "coalesce",
+            ["get", "vagas_atuais"],
+            ["get", "vagas"],
+            ["get", "capacidade"],
+            "?",
+          ],
+          "text-font": ["sans-serif"],
+          "text-size": ["interpolate", ["linear"], ["zoom"], 10, 8, 16, 10],
+          "text-allow-overlap": true,
+          "text-ignore-placement": true,
+        },
+        paint: {
+          "text-color": "#ffffff",
+          "text-halo-color": "#16a34a",
+          "text-halo-width": 0.5,
+        },
+      });
 
       map.addSource("contagem", {
         type: "geojson",
@@ -288,6 +441,46 @@ export function MapView({
         });
       });
 
+      // Eventos de hover para pontos do Bicicletar
+      map.on("mouseenter", "bicicletar", () => {
+        if (mapRef.current && layersVisibility.bicicletar) {
+          mapRef.current.setPaintProperty(
+            "bicicletar-shadow",
+            "circle-opacity",
+            0.4
+          );
+          mapRef.current.setPaintProperty("bicicletar", "circle-stroke-width", [
+            "interpolate",
+            ["linear"],
+            ["zoom"],
+            10,
+            1.25,
+            16,
+            2,
+          ]);
+          mapRef.current.getCanvas().style.cursor = "pointer";
+        }
+      });
+
+      map.on("mouseleave", "bicicletar", () => {
+        if (mapRef.current) {
+          mapRef.current.setPaintProperty(
+            "bicicletar-shadow",
+            "circle-opacity",
+            0.2
+          );
+          mapRef.current.setPaintProperty("bicicletar", "circle-stroke-width", [
+            "interpolate",
+            ["linear"],
+            ["zoom"],
+            10,
+            0.75,
+            16,
+            1.25,
+          ]);
+          mapRef.current.getCanvas().style.cursor = "";
+        }
+      });
 
       // Click events para as vias
       map.on(
@@ -342,7 +535,7 @@ export function MapView({
       mapRef.current = null;
       setMapLoaded(false);
     };
-  }, [malhaData, zonas30Data]);
+  }, [malhaData, zonas30Data, bicicletarData]);
 
   useEffect(() => {
     if (!mapRef.current || !mapLoaded) return;

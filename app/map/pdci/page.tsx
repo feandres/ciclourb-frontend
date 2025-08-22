@@ -7,6 +7,7 @@ import type { FeatureCollection, Geometry, GeoJsonProperties } from "geojson";
 export default function MapPage() {
   const [malhas, setMalhas] = useState<any[]>([]);
   const [zonas30, setZonas30] = useState<any[]>([]);
+  const [bicicletares, setBicicletares] = useState<FeatureCollection<Geometry, GeoJsonProperties> | null>(null);
   const [contagens, setContagens] = useState<FeatureCollection<Geometry, GeoJsonProperties> | undefined>(undefined);
 
   const [filters, setFilters] = useState({
@@ -91,11 +92,14 @@ export default function MapPage() {
 
   return (
     <div className="w-full h-full">
+      {bicicletares && (
         <MapView 
           malhaData={filteredMalhaGeoJSON} 
           zonas30Data={filteresZonas30GeoJSON}
+          bicicletarData={bicicletares} 
           contagensData={contagens}
         />
+      )}
     </div>
   );
 }

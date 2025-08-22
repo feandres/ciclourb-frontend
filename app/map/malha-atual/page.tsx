@@ -2,14 +2,58 @@
 
 import { useEffect, useState, useMemo } from "react";
 import { MapView } from "@/components/map";
-import type { FeatureCollection, Geometry, GeoJsonProperties } from "geojson";
+
+interface MalhaPDCI {
+  id: number;
+  fid: number;
+  name: string;
+  trecho: string;
+  tipologia: string;
+  sentido: string;
+  prazo: string;
+  executado: string;
+  ano: string;
+  dentro_do_prazo: string;
+  obs: string | null;
+  extensao: number;
+  extensao_executada: number;
+  geom: any;
+}
+
+interface GeoJSONFeature {
+  type: "Feature";
+  properties: {
+    id: number;
+    fid: number;
+    name: string;
+    trecho: string;
+    tipologia: string;
+    sentido: string;
+    prazo: string;
+    executado: string;
+    ano: string;
+    dentro_do_prazo: string;
+    obs: string | null;
+    extensao: number;
+    extensao_executada: number;
+  };
+  geometry: any;
+}
+
+interface GeoJSONFeatureCollection {
+  type: "FeatureCollection";
+  features: GeoJSONFeature[];
+}
+
+// Extend the MapView props to include geojsonData
+declare module "@/components/map" {
+  interface Props {
+    geojsonData: GeoJSONFeatureCollection;
+  }
+}
 
 export default function MapPage() {
-  const [malhas, setMalhas] = useState<any[]>([]);
-  const [zonas30, setZonas30] = useState<any[]>([]);
-  const [bicicletares, setBicicletares] = useState<FeatureCollection<Geometry, GeoJsonProperties> | null>(null);
-  const [contagens, setContagens] = useState<FeatureCollection<Geometry, GeoJsonProperties> | undefined>(undefined);
-
+  const [malhas, setMalhas] = useState<MalhaPDCI[]>([]);
   const [filters, setFilters] = useState({
     tipologia: "",
     sentido: "",
@@ -22,28 +66,44 @@ export default function MapPage() {
   useEffect(() => {
     async function fetchData() {
       try {
-        const [malhaRes, zonasRes, biciRes, contRes] = await Promise.all([
-          fetch(`https://ciclourb-backend.vercel.app/api/malha-pdci`).then(res => res.json()),
-          fetch(`https://ciclourb-backend.vercel.app/api/zonas30`).then(res => res.json()),
-          fetch(`https://ciclourb-backend.vercel.app/api/bicicletar`).then(res => res.json()),
-          fetch(`https://ciclourb-backend.vercel.app/api/contagem/contagens`).then(res => res.json()),
-        ]);
+        const res = await fetch("http://localhost:3001/graphql", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            query: `
+              query {
+                malhaPDCIAll {
+                  id
+                  fid
+                  name
+                  trecho
+                  tipologia
+                  sentido
+                  prazo
+                  executado
+                  ano
+                  dentro_do_prazo
+                  obs
+                  extensao
+                  extensao_executada
+                  geom
+                }
+              }
+            `,
+          }),
+        });
 
-        setMalhas(malhaRes);
-        setZonas30(zonasRes);
-        setBicicletares(biciRes);
-        setContagens(contRes); 
-
-        console.log("GeoJSON Contagens:", contRes);
+        const { data } = await res.json();
+        setMalhas(data.malhaPDCIAll);
       } catch (error) {
-        console.error("Erro ao buscar dados da API REST:", error);
+        console.error("Erro ao buscar dados GraphQL:", error);
       }
     }
 
     fetchData();
   }, []);
 
-  const filteredMalhaGeoJSON = useMemo(() => {
+  const filteredGeoJSON = useMemo((): GeoJSONFeatureCollection => {
     const filtered = malhas.filter(malha => {
       return (
         (filters.tipologia ? malha.tipologia === filters.tipologia : true) &&
@@ -56,9 +116,9 @@ export default function MapPage() {
     });
 
     return {
-      type: "FeatureCollection" as const,
+      type: "FeatureCollection",
       features: filtered.map(malha => ({
-        type: "Feature" as const,
+        type: "Feature",
         properties: {
           id: malha.id,
           fid: malha.fid,
@@ -79,28 +139,80 @@ export default function MapPage() {
     };
   }, [malhas, filters]);
 
-  const filteresZonas30GeoJSON = useMemo(() => ({
-    type: "FeatureCollection" as const,
-    features: zonas30.map(zona30 => ({
-      type: "Feature" as const,
-      properties: {
-        id: zona30.id,
-        fid: zona30.fid,
-        name: zona30.name,
-      },
-      geometry: zona30.geom,
-    })),
-  }), [zonas30]);
+  const handleFilterChange = (filterKey: keyof typeof filters, value: string) => {
+    setFilters(prev => ({ ...prev, [filterKey]: value }));
+  };
 
   return (
-    <div className="w-full h-full">
-      {bicicletares && (
-        <MapView 
-          malhaData={filteredMalhaGeoJSON} 
-          zonas30Data={filteresZonas30GeoJSON}
-          contagensData={contagens}
+    <main className="flex-1 p-4">
+      <div className="mb-4 grid grid-cols-3 gap-2">
+        <select
+          className="border p-2 rounded"
+          value={filters.tipologia}
+          onChange={(e) => handleFilterChange('tipologia', e.target.value)}
+        >
+          <option value="">Tipologia</option>
+          <option value="Ciclofaixa">Ciclofaixa</option>
+          <option value="Ciclovia">Ciclovia</option>
+          <option value="Passeio compartilhado">Passeio compartilhado</option>
+          <option value="Ciclorrota">Ciclorrota</option>
+        </select>
+
+        <select
+          className="border p-2 rounded"
+          value={filters.sentido}
+          onChange={(e) => handleFilterChange('sentido', e.target.value)}
+        >
+          <option value="">Sentido</option>
+          <option value="Bidirecional">Bidirecional</option>
+          <option value="Unidirecional">Unidirecional</option>
+        </select>
+
+        <select
+          className="border p-2 rounded"
+          value={filters.prazo}
+          onChange={(e) => handleFilterChange('prazo', e.target.value)}
+        >
+          <option value="">Prazo</option>
+          <option value="Curto">Curto</option>
+          <option value="Médio">Médio</option>
+          <option value="Longo">Longo</option>
+        </select>
+      </div>
+
+      <div className="mb-4 grid grid-cols-3 gap-2">
+        <select
+          className="border p-2 rounded"
+          value={filters.executado}
+          onChange={(e) => handleFilterChange('executado', e.target.value)}
+        >
+          <option value="">Executado</option>
+          <option value="Sim">Sim</option>
+          <option value="Não">Não</option>
+        </select>
+
+        <select
+          className="border p-2 rounded"
+          value={filters.dentro_do_prazo}
+          onChange={(e) => handleFilterChange('dentro_do_prazo', e.target.value)}
+        >
+          <option value="">Dentro do Prazo</option>
+          <option value="Sim">Sim</option>
+          <option value="Não">Não</option>
+        </select>
+
+        <input
+          type="text"
+          className="border p-2 rounded"
+          placeholder="Ano"
+          value={filters.ano}
+          onChange={(e) => handleFilterChange('ano', e.target.value)}
         />
-      )}
-    </div>
+      </div>
+
+      <div className="w-full h-[calc(100vh-12rem)]">
+        {/* <MapView geojsonData={filteredGeoJSON} /> */}
+      </div>
+    </main>
   );
 }
