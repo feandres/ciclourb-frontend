@@ -8,7 +8,7 @@ export default function MapPage() {
   const [malhas, setMalhas] = useState<any[]>([]);
   const [zonas30, setZonas30] = useState<any[]>([]);
   const [bicicletares, setBicicletares] = useState<FeatureCollection<Geometry, GeoJsonProperties> | null>(null);
-  const [contagens, setContagens] = useState<FeatureCollection<Geometry, GeoJsonProperties> | null>(null);
+  const [contagens, setContagens] = useState<FeatureCollection<Geometry, GeoJsonProperties> | undefined>(undefined);
 
   const [filters, setFilters] = useState({
     tipologia: "",
@@ -34,7 +34,7 @@ export default function MapPage() {
         setBicicletares(biciRes);
         setContagens(contRes); 
 
-        console.log("GeoJSON Bicicletar:", biciRes);
+        console.log("GeoJSON Bicicletar:", contRes);
       } catch (error) {
         console.error("Erro ao buscar dados da API REST:", error);
       }
@@ -99,7 +99,7 @@ export default function MapPage() {
           malhaData={filteredMalhaGeoJSON} 
           zonas30Data={filteresZonas30GeoJSON}
           bicicletarData={bicicletares} 
-          contagensData={contagens ?? undefined}
+          contagensData={contagens}
         />
       )}
     </div>
