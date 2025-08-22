@@ -23,10 +23,10 @@ export default function MapPage() {
     async function fetchData() {
       try {
         const [malhaRes, zonasRes, biciRes, contRes] = await Promise.all([
-          fetch(`${process.env.API_URL}/malha-pdci`).then(res => res.json()),
-          fetch(`${process.env.API_URL}/zonas30`).then(res => res.json()),
-          fetch(`${process.env.API_URL}/bicicletar`).then(res => res.json()),
-          fetch(`${process.env.API_URL}/contagem/contagens`).then(res => res.json()),
+          fetch(`${process.env.NEXT_PUBLIC_API_URL}/malha-pdci`).then(res => res.json()),
+          fetch(`${process.env.NEXT_PUBLIC_API_URL}/zonas30`).then(res => res.json()),
+          fetch(`${process.env.NEXT_PUBLIC_API_URL}/bicicletar`).then(res => res.json()),
+          fetch(`${process.env.NEXT_PUBLIC_API_URL}/contagem/contagens`).then(res => res.json()),
         ]);
 
         setMalhas(malhaRes);
