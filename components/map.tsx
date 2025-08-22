@@ -10,39 +10,9 @@ import MalhaPopup from "./malhaPopup";
 interface Props {
   malhaData: FeatureCollection<Geometry, GeoJsonProperties>;
   zonas30Data: FeatureCollection<Geometry, GeoJsonProperties>;
-  bicicletarData: FeatureCollection<Geometry, GeoJsonProperties>;
   contagensData?: FeatureCollection<Geometry, GeoJsonProperties>;
 }
 
-const BicicletarPopup = ({ props }: { props: any }) => {
-  const vagas = props.vagas_atuais || props.vagas || props.capacidade || 0;
-  const nome = props.nome || props.name || props.station_name || "Estação";
-  const endereco = props.endereco || props.address || props.location || "";
-
-  return (
-    <div className="p-4 min-w-64 max-w-80">
-      <div className="flex items-center gap-2 mb-3">
-        <div className="w-3 h-3 bg-green-500 rounded-full"></div>
-        <h3 className="font-bold text-gray-800 text-lg">{nome}</h3>
-      </div>
-
-      {endereco && (
-        <div className="mb-3">
-          <p className="text-sm text-gray-600">{endereco}</p>
-        </div>
-      )}
-
-      <div className="bg-green-50 p-4 rounded-lg text-center">
-        <div className="text-3xl font-bold text-green-600">{vagas}</div>
-        <div className="text-sm text-green-700 font-medium">Total de Vagas</div>
-      </div>
-
-      <div className="mt-3 pt-3 border-t border-gray-200">
-        <p className="text-xs text-gray-500">Clique no mapa para fechar</p>
-      </div>
-    </div>
-  );
-};
 
 const ContagemPopup = ({ props }: { props: any }) => {
   const ciclistas_por_min = props.ciclistas_por_min || 0;
@@ -94,7 +64,6 @@ const ContagemPopup = ({ props }: { props: any }) => {
 export function MapView({
   malhaData,
   zonas30Data,
-  bicicletarData,
   contagensData,
 }: Props) {
   const mapContainer = useRef<HTMLDivElement>(null);
@@ -110,7 +79,6 @@ export function MapView({
     ciclorrota: true,
     passeio: true,
     zonas30: true,
-    bicicletar: true,
     contagem: true,
   });
 
@@ -135,12 +103,6 @@ export function MapView({
       label: "Zonas 30",
       color: "#ffb703",
       isArea: true,
-    },
-    {
-      key: "bicicletar",
-      label: "Bicicletar",
-      color: "#10b981",
-      isPoint: true,
     },
     {
       key: "contagem",
@@ -246,154 +208,7 @@ export function MapView({
         paint: { "fill-color": "#ffb703", "fill-opacity": 0.3 },
       });
 
-      map.addSource("bicicletar", { type: "geojson", data: bicicletarData });
-
-      map.addLayer({
-        id: "bicicletar-shadow",
-        type: "circle",
-        source: "bicicletar",
-        paint: {
-          "circle-color": "#10b981",
-          "circle-opacity": 0.2,
-          "circle-radius": [
-            "interpolate",
-            ["linear"],
-            ["zoom"],
-            10,
-            [
-              "interpolate",
-              ["linear"],
-              [
-                "coalesce",
-                ["get", "vagas_atuais"],
-                ["get", "vagas"],
-                ["get", "capacidade"],
-                10,
-              ],
-              1,
-              4,
-              50,
-              8,
-            ],
-            16,
-            [
-              "interpolate",
-              ["linear"],
-              [
-                "coalesce",
-                ["get", "vagas_atuais"],
-                ["get", "vagas"],
-                ["get", "capacidade"],
-                10,
-              ],
-              1,
-              8,
-              50,
-              14,
-            ],
-          ],
-          "circle-stroke-width": 0,
-        },
-      });
-
-      map.addLayer({
-        id: "bicicletar",
-        type: "circle",
-        source: "bicicletar",
-        paint: {
-          "circle-color": [
-            "interpolate",
-            ["linear"],
-            [
-              "coalesce",
-              ["get", "vagas_atuais"],
-              ["get", "vagas"],
-              ["get", "capacidade"],
-              10,
-            ],
-            1,
-            "#16a34a", // Verde escuro para poucas vagas
-            20,
-            "#22c55e", // Verde médio
-            40,
-            "#4ade80", // Verde claro para muitas vagas
-          ],
-          "circle-radius": [
-            "interpolate",
-            ["linear"],
-            ["zoom"],
-            10,
-            [
-              "interpolate",
-              ["linear"],
-              [
-                "coalesce",
-                ["get", "vagas_atuais"],
-                ["get", "vagas"],
-                ["get", "capacidade"],
-                10,
-              ],
-              1,
-              3, // mínimo 3px para 1 vaga
-              50,
-              6, // máximo 6px para 50+ vagas
-            ],
-            16,
-            [
-              "interpolate",
-              ["linear"],
-              [
-                "coalesce",
-                ["get", "vagas_atuais"],
-                ["get", "vagas"],
-                ["get", "capacidade"],
-                10,
-              ],
-              1,
-              6, // mínimo 6px para 1 vaga
-              50,
-              11, // máximo 11px para 50+ vagas
-            ],
-          ],
-          "circle-stroke-color": "#ffffff",
-          "circle-stroke-width": [
-            "interpolate",
-            ["linear"],
-            ["zoom"],
-            10,
-            0.75,
-            16,
-            1.25,
-          ],
-          "circle-opacity": 0.9,
-        },
-      });
-
-      // Camada de ícone/número para mostrar quantidade de vagas
-      map.addLayer({
-        id: "bicicletar-label",
-        type: "symbol",
-        source: "bicicletar",
-        layout: {
-          "text-field": [
-            "coalesce",
-            ["get", "vagas_atuais"],
-            ["get", "vagas"],
-            ["get", "capacidade"],
-            "?",
-          ],
-          "text-font": ["sans-serif"],
-          "text-size": ["interpolate", ["linear"], ["zoom"], 10, 8, 16, 10],
-          "text-allow-overlap": true,
-          "text-ignore-placement": true,
-        },
-        paint: {
-          "text-color": "#ffffff",
-          "text-halo-color": "#16a34a",
-          "text-halo-width": 0.5,
-        },
-      });
-
+    
       map.addSource("contagem", {
         type: "geojson",
         data: contagensData ?? { type: "FeatureCollection", features: [] },
@@ -441,46 +256,6 @@ export function MapView({
         });
       });
 
-      // Eventos de hover para pontos do Bicicletar
-      map.on("mouseenter", "bicicletar", () => {
-        if (mapRef.current && layersVisibility.bicicletar) {
-          mapRef.current.setPaintProperty(
-            "bicicletar-shadow",
-            "circle-opacity",
-            0.4
-          );
-          mapRef.current.setPaintProperty("bicicletar", "circle-stroke-width", [
-            "interpolate",
-            ["linear"],
-            ["zoom"],
-            10,
-            1.25,
-            16,
-            2,
-          ]);
-          mapRef.current.getCanvas().style.cursor = "pointer";
-        }
-      });
-
-      map.on("mouseleave", "bicicletar", () => {
-        if (mapRef.current) {
-          mapRef.current.setPaintProperty(
-            "bicicletar-shadow",
-            "circle-opacity",
-            0.2
-          );
-          mapRef.current.setPaintProperty("bicicletar", "circle-stroke-width", [
-            "interpolate",
-            ["linear"],
-            ["zoom"],
-            10,
-            0.75,
-            16,
-            1.25,
-          ]);
-          mapRef.current.getCanvas().style.cursor = "";
-        }
-      });
 
       // Click events para as vias
       map.on(
@@ -498,22 +273,7 @@ export function MapView({
         }
       );
 
-      // Click event para pontos do Bicicletar
-      map.on("click", "bicicletar", (e) => {
-        if (!e.features) return;
-        const props = e.features[0].properties;
-        const popupNode = document.createElement("div");
-        createRoot(popupNode).render(<BicicletarPopup props={props} />);
-        new maplibregl.Popup({
-          closeOnClick: true,
-          closeButton: true,
-          maxWidth: "350px",
-        })
-          .setLngLat(e.lngLat)
-          .setDOMContent(popupNode)
-          .addTo(map);
-      });
-
+    
       map.on("click", "contagem", (e) => {
         if (!e.features) return;
         const props = e.features[0].properties;
@@ -535,7 +295,7 @@ export function MapView({
       mapRef.current = null;
       setMapLoaded(false);
     };
-  }, [malhaData, zonas30Data, bicicletarData]);
+  }, [malhaData, zonas30Data]);
 
   useEffect(() => {
     if (!mapRef.current || !mapLoaded) return;
@@ -561,24 +321,6 @@ export function MapView({
           "visibility",
           visible ? "visible" : "none"
         );
-      }
-
-      // Para o Bicicletar, também controlar as camadas relacionadas
-      if (layer === "bicicletar") {
-        if (mapRef.current?.getLayer("bicicletar-shadow")) {
-          mapRef.current.setLayoutProperty(
-            "bicicletar-shadow",
-            "visibility",
-            visible ? "visible" : "none"
-          );
-        }
-        if (mapRef.current?.getLayer("bicicletar-label")) {
-          mapRef.current.setLayoutProperty(
-            "bicicletar-label",
-            "visibility",
-            visible ? "visible" : "none"
-          );
-        }
       }
     });
   }, [layersVisibility, mapLoaded]);
@@ -657,7 +399,7 @@ export function MapView({
                 Camadas Disponíveis
               </h3>
 
-              {layerConfigs.map(({ key, label, color, isArea, isPoint }) => (
+              {layerConfigs.map(({ key, label, color, isArea }) => (
                 <label key={key} className="group cursor-pointer">
                   <div className="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-50 transition-colors duration-200">
                     <div className="relative">
@@ -696,24 +438,6 @@ export function MapView({
                             />
                           </svg>
                         )}
-                      </div>
-                    </div>
-
-                    <div className="flex items-center gap-2 flex-1">
-                      <div className="flex items-center gap-2">
-                        <div
-                          className={`w-4 h-4 border border-white shadow-sm ${
-                            isPoint
-                              ? "rounded-full"
-                              : isArea
-                              ? "rounded opacity-60"
-                              : "rounded-sm"
-                          }`}
-                          style={{ backgroundColor: color }}
-                        />
-                        <span className="text-sm font-medium text-gray-700">
-                          {label}
-                        </span>
                       </div>
                     </div>
 
