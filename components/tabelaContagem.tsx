@@ -55,7 +55,7 @@ export default function TabelaContagem() {
     if (realizador) params.append("realizador", realizador);
 
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/contagem?${params.toString()}`);
+      const res = await fetch(`https://ciclourb-backend.vercel.app/api/contagem?${params.toString()}`);
       const json = await res.json();
       setData(json.data ?? []);
       setTotal(json.total ?? 0);

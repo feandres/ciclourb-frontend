@@ -22,7 +22,7 @@ export default function EvolucaoMalhaAnoChart() {
   useEffect(() => {
     async function fetchData() {
       try {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/dados/evolucao-malha-ano`);
+        const res = await fetch(`https://ciclourb-backend.vercel.app/api/dados/evolucao-malha-ano`);
         const json = await res.json();
 
         const items: Item[] = json.map((i: any) => ({
