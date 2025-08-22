@@ -11,7 +11,7 @@ interface Props {
   malhaData: FeatureCollection<Geometry, GeoJsonProperties>;
   zonas30Data: FeatureCollection<Geometry, GeoJsonProperties>;
   bicicletarData: FeatureCollection<Geometry, GeoJsonProperties>;
-  contagensData?: FeatureCollection<Geometry, GeoJsonProperties>; 
+  contagensData?: FeatureCollection<Geometry, GeoJsonProperties>;
 }
 
 const BicicletarPopup = ({ props }: { props: any }) => {
@@ -46,7 +46,7 @@ const BicicletarPopup = ({ props }: { props: any }) => {
 
 const ContagemPopup = ({ props }: { props: any }) => {
   const ciclistas_por_min = props.ciclistas_por_min || 0;
-  const realizador = props.realizador || ""
+  const realizador = props.realizador || "";
   const masculino = props.masculino || 0;
   const feminino = props.feminino || 0;
   const total = props.total || 0;
@@ -59,8 +59,14 @@ const ContagemPopup = ({ props }: { props: any }) => {
         <h3 className="font-bold text-gray-800 text-lg">{nome}</h3>
       </div>
       <div className="flex justify-between">
-        {realizador && <h4 className="font-semibold text-gray-800 text-md">Realizador: {realizador}</h4>}
-        <h4 className="font-semibold text-gray-800 text-md">Ciclistas por minuto: {ciclistas_por_min}</h4>
+        {realizador && (
+          <h4 className="font-semibold text-gray-800 text-md">
+            Realizador: {realizador}
+          </h4>
+        )}
+        <h4 className="font-semibold text-gray-800 text-md">
+          Ciclistas por minuto: {ciclistas_por_min}
+        </h4>
       </div>
 
       <div className="w-full gap-2 flex">
@@ -85,7 +91,12 @@ const ContagemPopup = ({ props }: { props: any }) => {
   );
 };
 
-export function MapView({ malhaData, zonas30Data, bicicletarData, contagensData }: Props) {
+export function MapView({
+  malhaData,
+  zonas30Data,
+  bicicletarData,
+  contagensData,
+}: Props) {
   const mapContainer = useRef<HTMLDivElement>(null);
   const mapRef = useRef<Map | null>(null);
 
@@ -100,7 +111,7 @@ export function MapView({ malhaData, zonas30Data, bicicletarData, contagensData 
     passeio: true,
     zonas30: true,
     bicicletar: true,
-    contagem: true
+    contagem: true,
   });
 
   const tipologiaColors: Record<string, string> = {
@@ -128,14 +139,14 @@ export function MapView({ malhaData, zonas30Data, bicicletarData, contagensData 
     {
       key: "bicicletar",
       label: "Bicicletar",
-      color: "#10b981", 
+      color: "#10b981",
       isPoint: true,
     },
     {
       key: "contagem",
       label: "Contagem",
-      color: "#34A6F4"
-    }
+      color: "#34A6F4",
+    },
   ];
 
   const getVisibleLayersCount = () => {
@@ -251,9 +262,9 @@ export function MapView({ malhaData, zonas30Data, bicicletarData, contagensData 
                 10,
               ],
               1,
-              4, 
+              4,
               50,
-              8, 
+              8,
             ],
             16,
             [
@@ -267,7 +278,7 @@ export function MapView({ malhaData, zonas30Data, bicicletarData, contagensData 
                 10,
               ],
               1,
-              8, 
+              8,
               50,
               14,
             ],
@@ -374,8 +385,10 @@ export function MapView({ malhaData, zonas30Data, bicicletarData, contagensData 
         },
       });
 
-      map.addSource("contagem", { type: "geojson", data: contagensData });
-
+      map.addSource("contagem", {
+        type: "geojson",
+        data: contagensData ?? { type: "FeatureCollection", features: [] },
+      });
       map.addLayer({
         id: "contagem",
         type: "circle",
@@ -507,7 +520,6 @@ export function MapView({ malhaData, zonas30Data, bicicletarData, contagensData 
           .addTo(map);
       });
     });
-    
 
     return () => {
       map.remove();
