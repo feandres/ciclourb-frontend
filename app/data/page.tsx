@@ -188,6 +188,51 @@ export default function DataPage() {
     <>
       <Hero imageUrl="/hero_6.jpg" />
 
+      <section className="w-full bg-gradient-to-r from-[#FFF8E5] via-[#FFFBF0] to-[#FFF8E5] py-6 sm:py-12 border-b-2 border-[#d6c9a3] shadow-sm">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 flex flex-col items-center text-center space-y-6">
+          <div className="bg-white/70 backdrop-blur-sm rounded-2xl px-8 py-6 shadow-lg border border-[#d6c9a3]/40">
+            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-[#4D3A08] mb-4 tracking-tight flex items-center justify-center gap-2">
+              Observatório Cicloviário de Fortaleza
+            </h2>
+            <p className="text-sm sm:text-base text-[#79693F] font-medium leading-relaxed text-justify">
+              O Observatório Cicloviário de Fortaleza é uma iniciativa dedicada
+              ao monitoramento da infraestrutura voltada para bicicletas,
+              comparando o que foi planejado em políticas e diretrizes oficiais
+              com o que, de fato, foi executado. A plataforma também reúne e
+              organiza dados sobre o sistema de bicicletas compartilhadas da
+              cidade (Bicicletar), o perfil dos ciclistas e outras informações
+              relevantes para a mobilidade urbana por bicicleta. O Observatório
+              Cicloviário de Fortaleza tem como principal inspiração o modelo
+              desenvolvido pela AMECICIO (Associação Metropolitana de Ciclistas
+              do Recife) na Região Metropolitana do Recife/PE.
+            </p>
+          </div>
+
+          <nav className="flex flex-wrap justify-center gap-2 sm:gap-4 text-sm font-semibold">
+            {[
+              { href: "#malha", text: "Malha Cicloviária atual" },
+              { href: "#contagens", text: "Contagens" },
+              { href: "#analise", text: "Análise PDCI" },
+              { href: "#perfil", text: "Perfil Nacional do Ciclista" },
+              {
+                href: "https://mobilidade.fortaleza.ce.gov.br/images/pdf/PDCI_FORTALEZA.pdf",
+                text: "Download Plano Diretor",
+                download: true,
+              },
+            ].map((item) => (
+              <a
+                key={item.href}
+                href={item.href}
+                download={item.download}
+                className="bg-white/80 hover:bg-white text-[#79693F] hover:text-[#4D3A08] px-4 py-2 rounded-full transition-all duration-300 hover:shadow-md hover:scale-105 border border-[#d6c9a3]/30 hover:border-[#79693F]/50"
+              >
+                {item.text}
+              </a>
+            ))}
+          </nav>
+        </div>
+      </section>
+
       <section className="w-full bg-gradient-to-br from-[#403500] via-[#4D3A08] to-[#403500] text-[#FFF8E5] px-4 sm:px-6 py-12 sm:py-16 relative overflow-hidden">
         <div className="max-w-7xl mx-auto relative z-10">
           <div className="text-center mb-12">
