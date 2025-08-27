@@ -76,20 +76,20 @@ export default function HomePage() {
     {
       titulo: "Contagens Volumétricas de Ciclistas",
       texto: `Realização de contagens volumétricas e registros sistemáticos, com o objetivo de subsidiar o planejamento das infraestruturas cicloviárias e assegurar sua implantação por meio da documentação do fluxo de ciclistas.`,
-      imagem: "/hero_1.jpg",
+      imagem: "/hero/hero_1.jpg",
       legenda: "",
     },
     {
       titulo: "Pesquisas e Análises",
       texto: `Elaboração de análises e estudos técnicos sobre mobilidade urbana, com ênfase no contexto do município de Fortaleza, abrangendo seu planejamento urbano e as políticas públicas de transporte implementadas.`,
-      imagem: "/hero_9.jpg",
+      imagem: "/hero/hero_9.jpg",
       legenda: "",
     },
   ];
 
   return (
     <div className="min-h-screen bg-[#FFF8E5]">
-      <Hero imageUrl="/hero_3.jpg" />
+      <Hero />
 
       <section className="py-12 sm:py-20 px-4 sm:px-6 ">
         <div className="max-w-7xl mx-auto">

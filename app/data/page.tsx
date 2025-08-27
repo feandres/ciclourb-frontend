@@ -186,7 +186,7 @@ export default function DataPage() {
 
   return (
     <>
-      <Hero imageUrl="/hero_6.jpg" />
+      <Hero />
 
       <section className="w-full bg-gradient-to-r from-[#FFF8E5] via-[#FFFBF0] to-[#FFF8E5] py-6 sm:py-12 border-b-2 border-[#d6c9a3] shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 flex flex-col items-center text-center space-y-6">
