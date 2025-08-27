@@ -3,6 +3,7 @@ import { Poppins } from "next/font/google";
 import "./globals.css";
 import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
+import ScrollToTopButton from "@/components/back-to-top-button";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -37,6 +38,7 @@ export default function RootLayout({
       >
         <Navbar />
         <main className="flex-1">{children}</main>
+        <ScrollToTopButton />
         <Footer />
       </body>
     </html>
