@@ -7,7 +7,6 @@ import type { FeatureCollection, Geometry, GeoJsonProperties } from "geojson";
 export default function MapPage() {
   const [malhas, setMalhas] = useState<any[]>([]);
   const [zonas30, setZonas30] = useState<any[]>([]);
-  const [bicicletares, setBicicletares] = useState<FeatureCollection<Geometry, GeoJsonProperties> | null>(null);
   const [contagens, setContagens] = useState<FeatureCollection<Geometry, GeoJsonProperties> | undefined>(undefined);
 
   const [filters, setFilters] = useState({
@@ -22,19 +21,16 @@ export default function MapPage() {
   useEffect(() => {
     async function fetchData() {
       try {
-        const [malhaRes, zonasRes, biciRes, contRes] = await Promise.all([
-          fetch(`https://ciclourb-backend.vercel.app/api/malha-pdci`).then(res => res.json()),
-          fetch(`https://ciclourb-backend.vercel.app/api/zonas30`).then(res => res.json()),
-          fetch(`https://ciclourb-backend.vercel.app/api/bicicletar`).then(res => res.json()),
-          fetch(`https://ciclourb-backend.vercel.app/api/contagem/contagens`).then(res => res.json()),
+        const [malhaRes, zonasRes, contRes] = await Promise.all([
+          fetch(`${process.env.NEXT_PUBLIC_API_ROUTE}/malha-pdci`).then(res => res.json()),
+          fetch(`${process.env.NEXT_PUBLIC_API_ROUTE}/zonas30`).then(res => res.json()),
+          fetch(`${process.env.NEXT_PUBLIC_API_ROUTE}/contagem/contagens`).then(res => res.json()),
         ]);
 
         setMalhas(malhaRes);
         setZonas30(zonasRes);
-        setBicicletares(biciRes);
         setContagens(contRes); 
 
-        console.log("GeoJSON Contagens:", contRes);
       } catch (error) {
         console.error("Erro ao buscar dados da API REST:", error);
       }
@@ -94,14 +90,13 @@ export default function MapPage() {
 
   return (
     <div className="w-full h-full">
-      {bicicletares && (
-        <MapView 
-          malhaData={filteredMalhaGeoJSON} 
-          zonas30Data={filteresZonas30GeoJSON}
-          bicicletarData={bicicletares} 
-          contagensData={contagens}
-        />
-      )}
+      <MapView 
+        malhaData={filteredMalhaGeoJSON} 
+        zonas30Data={filteresZonas30GeoJSON}
+        contagensData={contagens}
+        filters={setFilters}
+        setFilters={setFilters}
+      />
     </div>
   );
 }

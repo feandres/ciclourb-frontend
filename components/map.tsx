@@ -9,9 +9,11 @@ import MalhaPopup from "./malhaPopup";
 
 interface Props {
   malhaData: FeatureCollection<Geometry, GeoJsonProperties>;
-  zonas30Data: FeatureCollection<Geometry, GeoJsonProperties>;
-  bicicletarData: FeatureCollection<Geometry, GeoJsonProperties>;
+  zonas30Data?: FeatureCollection<Geometry, GeoJsonProperties>;
+  bicicletarData?: FeatureCollection<Geometry, GeoJsonProperties> | undefined;
   contagensData?: FeatureCollection<Geometry, GeoJsonProperties>;
+  filters: any;
+  setFilters: any;
 }
 
 const BicicletarPopup = ({ props }: { props: any }) => {
@@ -96,6 +98,8 @@ export function MapView({
   zonas30Data,
   bicicletarData,
   contagensData,
+  filters,
+  setFilters
 }: Props) {
   const mapContainer = useRef<HTMLDivElement>(null);
   const mapRef = useRef<Map | null>(null);
@@ -122,8 +126,8 @@ export function MapView({
   };
 
   const layerConfigs = [
-    { key: "ciclofaixa", label: "Ciclofaixa", color: "#e63946" },
-    { key: "ciclovia", label: "Ciclovia", color: "#2a9d8f" },
+    { key: "ciclofaixa", label: "Ciclofaixa", color: "#e63946", isPoint: false },
+    { key: "ciclovia", label: "Ciclovia", color: "#2a9d8f", isArea: false },
     { key: "ciclorrota", label: "Ciclorrota", color: "#1d3557" },
     {
       key: "passeio",
@@ -131,23 +135,30 @@ export function MapView({
       color: "#11ff05",
     },
     {
-      key: "zonas30",
-      label: "Zonas 30",
-      color: "#ffb703",
-      isArea: true,
-    },
-    {
-      key: "bicicletar",
-      label: "Bicicletar",
-      color: "#10b981",
-      isPoint: true,
-    },
-    {
       key: "contagem",
       label: "Contagem",
       color: "#34A6F4",
     },
   ];
+
+  if (bicicletarData) {
+    layerConfigs.push({
+      key: "bicicletar",
+      label: "Bicicletar",
+      color: "#10b981",
+      isPoint: true,
+    })
+  }
+
+  if (zonas30Data) {
+    layerConfigs.push(
+    {
+      key: "zonas30",
+      label: "Zonas 30",
+      color: "#ffb703",
+      isArea: true,
+    })
+  }
 
   const getVisibleLayersCount = () => {
     return Object.values(layersVisibility).filter(Boolean).length;
@@ -238,17 +249,20 @@ export function MapView({
         });
       });
 
-      map.addSource("zonas30", { type: "geojson", data: zonas30Data });
-      map.addLayer({
-        id: "zonas30",
-        type: "fill",
-        source: "zonas30",
-        paint: { "fill-color": "#ffb703", "fill-opacity": 0.3 },
-      });
+      if (zonas30Data) {  
+        map.addSource("zonas30", { type: "geojson", data: zonas30Data });
+        map.addLayer({
+          id: "zonas30",
+          type: "fill",
+          source: "zonas30",
+          paint: { "fill-color": "#ffb703", "fill-opacity": 0.3 },
+        });
+      }
 
-      map.addSource("bicicletar", { type: "geojson", data: bicicletarData });
-
-      map.addLayer({
+      if (bicicletarData) {
+        map.addSource("bicicletar", { type: "geojson", data: bicicletarData });
+        
+        map.addLayer({
         id: "bicicletar-shadow",
         type: "circle",
         source: "bicicletar",
@@ -291,12 +305,12 @@ export function MapView({
               50,
               14,
             ],
-          ],
-          "circle-stroke-width": 0,
-        },
-      });
+            ],
+            "circle-stroke-width": 0,
+          },
+        });
 
-      map.addLayer({
+        map.addLayer({
         id: "bicicletar",
         type: "circle",
         source: "bicicletar",
@@ -368,6 +382,7 @@ export function MapView({
           "circle-opacity": 0.9,
         },
       });
+    }
 
       // Camada de ícone/número para mostrar quantidade de vagas
       map.addLayer({
@@ -729,6 +744,43 @@ export function MapView({
                   </div>
                 </label>
               ))}
+              <select
+                className="p-2 m-2"
+                value={filters.ano}
+                onChange={(e) => setFilters({ ...filters, ano: e.target.value })}
+                >
+                <option value="" disabled>Selecione um ano</option>
+                <option value="">Todos os anos</option>
+                <option value="no_date">Sem data definida</option>
+                <option value="2025">2025</option>
+                <option value="2024">2024</option>
+                <option value="2023">2023</option>
+                <option value="2022">2022</option>
+                <option value="2021">2021</option>
+                <option value="2020">2020</option>
+                <option value="2019">2019</option>
+                <option value="2018">2018</option>
+                <option value="2016">2016</option>
+                <option value="2015">2015</option>
+                <option value="2014">2014</option>
+                <option value="2013">2013</option>
+                <option value="2012">2012</option>
+                <option value="2011">2011</option>
+                <option value="2010">2010</option>
+                <option value="2009">2009</option>
+                <option value="2007">2007</option>
+                <option value="2004">2004</option>
+                <option value="2000">2000</option>
+              </select>
+              <select
+                className="p-2 m-2"
+                value={filters.ano}
+                onChange={(e) => setFilters({ ...filters, ano: e.target.value })}
+                >
+                <option value="" disabled>Modo de visualização de contagens</option>
+                <option value="point">Pontos</option>
+                <option value="heat_map">Mapas de calor</option>
+              </select>
             </div>
 
             <div className="p-4 bg-gray-50/50 rounded-b-2xl">

@@ -6,7 +6,6 @@ import type { FeatureCollection, Geometry, GeoJsonProperties } from "geojson";
 
 export default function MapPage() {
   const [malhas, setMalhas] = useState<any[]>([]);
-  const [zonas30, setZonas30] = useState<any[]>([]);
   const [bicicletares, setBicicletares] = useState<FeatureCollection<Geometry, GeoJsonProperties> | null>(null);
   const [contagens, setContagens] = useState<FeatureCollection<Geometry, GeoJsonProperties> | undefined>(undefined);
 
@@ -22,19 +21,17 @@ export default function MapPage() {
   useEffect(() => {
     async function fetchData() {
       try {
-        const [malhaRes, zonasRes, biciRes, contRes] = await Promise.all([
-          fetch(`https://ciclourb-backend.vercel.app/api/malha-pdci`).then(res => res.json()),
-          fetch(`https://ciclourb-backend.vercel.app/api/zonas30`).then(res => res.json()),
-          fetch(`https://ciclourb-backend.vercel.app/api/bicicletar`).then(res => res.json()),
-          fetch(`https://ciclourb-backend.vercel.app/api/contagem/contagens`).then(res => res.json()),
+        const [malhaRes, biciRes, contRes] = await Promise.all([
+          fetch(`${process.env.NEXT_PUBLIC_API_ROUTE}/malha-pdci`).then(res => res.json()),
+          fetch(`${process.env.NEXT_PUBLIC_API_ROUTE}/bicicletar`).then(res => res.json()),
+          fetch(`${process.env.NEXT_PUBLIC_API_ROUTE}/contagem/contagens`).then(res => res.json()),
         ]);
 
         setMalhas(malhaRes);
-        setZonas30(zonasRes);
         setBicicletares(biciRes);
         setContagens(contRes); 
-
-        console.log("GeoJSON Contagens:", contRes);
+        console.log(contRes)
+        
       } catch (error) {
         console.error("Erro ao buscar dados da API REST:", error);
       }
@@ -79,27 +76,52 @@ export default function MapPage() {
     };
   }, [malhas, filters]);
 
-  const filteresZonas30GeoJSON = useMemo(() => ({
-    type: "FeatureCollection" as const,
-    features: zonas30.map(zona30 => ({
-      type: "Feature" as const,
-      properties: {
-        id: zona30.id,
-        fid: zona30.fid,
-        name: zona30.name,
-      },
-      geometry: zona30.geom,
-    })),
-  }), [zonas30]);
+  const filteredBicicletares = useMemo(() => {
+    if (!bicicletares) return undefined;
+
+    const filtered = bicicletares.features.filter(bicicletar => {
+      
+      if (filters.ano === "no_date") {
+        return (
+          (bicicletar?.properties?.ano_inauguracao === null)
+        )
+      }
+
+      return (
+        (filters.ano ? bicicletar?.properties?.ano_inauguracao == filters.ano : true)
+      )
+    });
+
+    return {
+      type: "FeatureCollection" as const,
+      features: filtered
+    };
+  }, [bicicletares, filters]);
+
+  const filteredContagens = useMemo(() => {
+    if (!contagens) return undefined;
+
+    const filtered = contagens.features.filter(contagem => {
+      return (
+        (filters.ano ? contagem?.properties?.ano == filters.ano : true)
+      )
+    });
+
+    return {
+      type: "FeatureCollection" as const,
+      features: filtered
+    };
+  }, [contagens, filters])
 
   return (
     <div className="w-full h-full">
       {bicicletares && (
         <MapView 
           malhaData={filteredMalhaGeoJSON} 
-          zonas30Data={filteresZonas30GeoJSON}
-          bicicletarData={bicicletares} 
-          contagensData={contagens}
+          bicicletarData={filteredBicicletares} 
+          contagensData={filteredContagens}
+          filters={filters}
+          setFilters={setFilters}
         />
       )}
     </div>
