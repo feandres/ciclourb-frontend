@@ -772,7 +772,7 @@ export function MapView({
                 <option value="2004">2004</option>
                 <option value="2000">2000</option>
               </select>
-              <select
+              {/* <select
                 className="p-2 m-2"
                 value={filters.ano}
                 onChange={(e) => setFilters({ ...filters, ano: e.target.value })}
@@ -780,7 +780,7 @@ export function MapView({
                 <option value="" disabled>Modo de visualização de contagens</option>
                 <option value="point">Pontos</option>
                 <option value="heat_map">Mapas de calor</option>
-              </select>
+              </select> */}
             </div>
 
             <div className="p-4 bg-gray-50/50 rounded-b-2xl">
