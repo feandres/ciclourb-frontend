@@ -22,9 +22,9 @@ export default function MapPage() {
     async function fetchData() {
       try {
         const [malhaRes, zonasRes, contRes] = await Promise.all([
-          fetch(`${process.env.NEXT_PUBLIC_API_ROUTE}/malha-pdci`).then(res => res.json()),
-          fetch(`${process.env.NEXT_PUBLIC_API_ROUTE}/zonas30`).then(res => res.json()),
-          fetch(`${process.env.NEXT_PUBLIC_API_ROUTE}/contagem/contagens`).then(res => res.json()),
+          fetch(`https://ciclourb-backend.vercel.app/api/malha-pdci`).then(res => res.json()),
+          fetch(`https://ciclourb-backend.vercel.app/api/zonas30`).then(res => res.json()),
+          fetch(`https://ciclourb-backend.vercel.app/api/contagem/contagens`).then(res => res.json()),
         ]);
 
         setMalhas(malhaRes);
