@@ -175,7 +175,7 @@ export function MapView({
       minZoom: 11,
       maxZoom: 17,
       maxBounds: [
-        [-38.65, -3.9],
+        [-38.75, -3.9],
         [-38.35, -3.65],
       ],
     });
@@ -223,7 +223,22 @@ export function MapView({
           label: "Ciclofaixa",
           color: tipologiaColors.ciclofaixa,
         },
+        {
+          key: "ciclofaixa unidirecional",
+          label: "Ciclofaixa unidirecional",
+          color: tipologiaColors.ciclofaixa,
+        },
+        {
+          key: "ciclofaixa bidirecional",
+          label: "Ciclofaixa bidirecional",
+          color: tipologiaColors.ciclofaixa,
+        },
         { key: "ciclovia", label: "Ciclovia", color: tipologiaColors.ciclovia },
+        {
+          key: "ciclovia bidirecional",
+          label: "Ciclovia bidirecional",
+          color: tipologiaColors.ciclovia
+        },
         {
           key: "ciclorrota",
           label: "Ciclorrota",
@@ -772,6 +787,17 @@ export function MapView({
                 <option value="2004">2004</option>
                 <option value="2000">2000</option>
               </select>
+              <select
+                className="p-2 m-2"
+                value={filters.executado}
+                onChange={(e) => setFilters({ ...filters, executado: e.target.value })}
+                >
+                <option value="" disabled>Selecione o status das vias</option>
+                <option value="">Malha completa</option>
+                <option value="Sim">Executado</option>
+                <option value="Parcial">Parciamente executado</option>
+                <option value="Não">Não executado</option>
+              </select>
               {/* <select
                 className="p-2 m-2"
                 value={filters.ano}
@@ -782,7 +808,6 @@ export function MapView({
                 <option value="heat_map">Mapas de calor</option>
               </select> */}
             </div>
-
             <div className="p-4 bg-gray-50/50 rounded-b-2xl">
               <div className="flex items-center gap-2 text-xs text-gray-500">
                 <svg

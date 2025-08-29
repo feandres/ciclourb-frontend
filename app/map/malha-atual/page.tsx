@@ -30,7 +30,6 @@ export default function MapPage() {
         setMalhas(malhaRes);
         setBicicletares(biciRes);
         setContagens(contRes); 
-        console.log(contRes)
         
       } catch (error) {
         console.error("Erro ao buscar dados da API REST:", error);
@@ -44,11 +43,7 @@ export default function MapPage() {
     const filtered = malhas.filter(malha => {
       return (
         (filters.tipologia ? malha.tipologia === filters.tipologia : true) &&
-        (filters.sentido ? malha.sentido === filters.sentido : true) &&
-        (filters.prazo ? malha.prazo === filters.prazo : true) &&
-        (filters.executado ? malha.executado === filters.executado : true) &&
-        (filters.ano ? malha.ano === filters.ano : true) &&
-        (filters.dentro_do_prazo ? malha.dentro_do_prazo === filters.dentro_do_prazo : true)
+        (filters.ano ? malha.ano == filters.ano : true)
       );
     });
 
@@ -59,17 +54,10 @@ export default function MapPage() {
         properties: {
           id: malha.id,
           fid: malha.fid,
-          name: malha.name,
-          trecho: malha.trecho,
+          pdci: malha.pdci,
           tipologia: malha.tipologia,
-          sentido: malha.sentido,
-          prazo: malha.prazo,
-          executado: malha.executado,
           ano: malha.ano,
-          dentro_do_prazo: malha.dentro_do_prazo,
-          obs: malha.obs,
           extensao: malha.extensao,
-          extensao_executada: malha.extensao_executada,
         },
         geometry: malha.geom,
       })),
