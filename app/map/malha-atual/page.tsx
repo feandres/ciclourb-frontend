@@ -22,7 +22,7 @@ export default function MapPage() {
     async function fetchData() {
       try {
         const [malhaRes, biciRes, contRes] = await Promise.all([
-          fetch(`https://ciclourb-backend.vercel.app/api/malha-pdci`).then(res => res.json()),
+          fetch(`https://ciclourb-backend.vercel.app/api/malha-atual`).then(res => res.json()),
           fetch(`https://ciclourb-backend.vercel.app/api/bicicletar`).then(res => res.json()),
           fetch(`https://ciclourb-backend.vercel.app/api/contagem/contagens`).then(res => res.json()),
         ]);
