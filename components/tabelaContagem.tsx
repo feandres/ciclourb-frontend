@@ -2,22 +2,14 @@
 
 import { useEffect, useState } from "react";
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
+  Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import {
-  Select,
-  SelectTrigger,
-  SelectContent,
-  SelectItem,
-  SelectValue,
+  Select, SelectTrigger, SelectContent, SelectItem, SelectValue,
 } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Input } from "@/components/ui/input"; // precisa existir no shadcn
 
 type Contagem = {
   local: string;
@@ -26,10 +18,9 @@ type Contagem = {
   total: string;
   realizador: string;
   ano: string;
+  ciclistas_por_min: string;
   geom: string;
 };
-
-
 
 export default function TabelaContagem() {
   const [data, setData] = useState<Contagem[]>([]);
@@ -41,6 +32,9 @@ export default function TabelaContagem() {
   const [ano, setAno] = useState<string | undefined>();
   const [turno, setTurno] = useState<string | undefined>();
   const [realizador, setRealizador] = useState<string | undefined>();
+  const [search, setSearch] = useState<string>("");
+  const [sortBy, setSortBy] = useState<string>("data");
+  const [sortOrder, setSortOrder] = useState<"ASC" | "DESC">("DESC");
 
   const totalPages = Math.ceil(total / limit);
 
@@ -50,12 +44,17 @@ export default function TabelaContagem() {
     const params = new URLSearchParams();
     params.append("page", page.toString());
     params.append("limit", limit.toString());
+    params.append("sortBy", sortBy);
+    params.append("sortOrder", sortOrder);
     if (ano) params.append("ano", ano);
     if (turno) params.append("turno", turno);
     if (realizador) params.append("realizador", realizador);
+    if (search) params.append("search", search);
 
     try {
-      const res = await fetch(`https://ciclourb-backend.vercel.app/api/contagem?${params.toString()}`);
+      const res = await fetch(
+        `https://ciclourb-backend.vercel.app/api/contagem?${params.toString()}`
+      );
       const json = await res.json();
       setData(json.data ?? []);
       setTotal(json.total ?? 0);
@@ -68,16 +67,23 @@ export default function TabelaContagem() {
 
   useEffect(() => {
     setPage(1); // reset page quando filtros mudam
-  }, [ano, turno, realizador]);
+  }, [ano, turno, realizador, search, sortBy, sortOrder]);
 
   useEffect(() => {
     fetchData();
-  }, [page, ano, turno, realizador]);
+  }, [page, ano, turno, realizador, search, sortBy, sortOrder]);
 
   return (
     <div className="space-y-6">
       {/* Filtros */}
-      <div className="flex gap-4">
+      <div className="flex flex-wrap gap-4">
+        <Input
+          placeholder="Buscar por local..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          className="w-[200px]"
+        />
+
         <Select onValueChange={(v) => setAno(v === "all" ? undefined : v)}>
           <SelectTrigger className="w-[150px]">
             <SelectValue placeholder="Ano" />
@@ -118,6 +124,27 @@ export default function TabelaContagem() {
             <SelectItem value="Ciclovida">Ciclovida</SelectItem>
           </SelectContent>
         </Select>
+
+        <Select onValueChange={(v) => setSortBy(v)}>
+          <SelectTrigger className="w-[220px]">
+            <SelectValue placeholder="Ordenar por" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="data">Data</SelectItem>
+            <SelectItem value="ano">Ano</SelectItem>
+            <SelectItem value="ciclistas_por_min">Ciclistas/min</SelectItem>
+          </SelectContent>
+        </Select>
+
+        <Select onValueChange={(v) => setSortOrder(v as "ASC" | "DESC")}>
+          <SelectTrigger className="w-[150px]">
+            <SelectValue placeholder="Ordem" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="ASC">Ascendente</SelectItem>
+            <SelectItem value="DESC">Descendente</SelectItem>
+          </SelectContent>
+        </Select>
       </div>
 
       {/* Tabela */}
@@ -136,6 +163,7 @@ export default function TabelaContagem() {
                 <TableHead>Data</TableHead>
                 <TableHead>Turno</TableHead>
                 <TableHead>Total</TableHead>
+                <TableHead>Ciclistas/min</TableHead>
                 <TableHead>Realizador</TableHead>
                 <TableHead>Ano</TableHead>
               </TableRow>
@@ -147,6 +175,7 @@ export default function TabelaContagem() {
                   <TableCell>{c.data}</TableCell>
                   <TableCell>{c.turno}</TableCell>
                   <TableCell>{c.total}</TableCell>
+                  <TableCell>{c.ciclistas_por_min}</TableCell>
                   <TableCell>{c.realizador}</TableCell>
                   <TableCell>{c.ano}</TableCell>
                 </TableRow>

@@ -108,7 +108,7 @@ export default function EvolucaoMalhaChart() {
           />
           <Line
             type="monotone"
-            dataKey="Ciclovia bidirecional"
+            dataKey="Ciclovia"
             stroke="#2563eb"
             strokeWidth={2}
             dot={{ r: 3 }}
