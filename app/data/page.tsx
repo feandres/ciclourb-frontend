@@ -138,9 +138,11 @@ interface Indicadores {
   [key: string]: number;
 }
 
+const API_ROUTE = process.env.NEXT_PUBLIC_API_ROUTE || "https://ciclourb-backend.vercel.app/api";
+
 async function fetchIndicadoresREST(): Promise<Indicadores> {
   const res = await fetch(
-    `https://ciclourb-backend.vercel.app/api/dados/indicadores`
+    `${API_ROUTE}/dados/indicadores`
   );
   const indicadoresRaw = await res.json();
 

@@ -16,13 +16,15 @@ type Item = {
   valor: number;
 };
 
+const API_ROUTE = process.env.NEXT_PUBLIC_API_ROUTE || "https://ciclourb-backend.vercel.app/api";
+
 export default function EvolucaoMalhaAnoChart() {
   const [data, setData] = useState<Item[]>([]);
 
   useEffect(() => {
     async function fetchData() {
       try {
-        const res = await fetch(`https://ciclourb-backend.vercel.app/api/dados/evolucao-malha-ano`);
+        const res = await fetch(`${API_ROUTE}/dados/evolucao-malha-ano`);
         const json = await res.json();
 
         const items: Item[] = json.map((i: any) => ({

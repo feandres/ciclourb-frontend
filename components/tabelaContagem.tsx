@@ -22,6 +22,8 @@ type Contagem = {
   geom: string;
 };
 
+const API_ROUTE = process.env.NEXT_PUBLIC_API_ROUTE || "https://ciclourb-backend.vercel.app/api";
+
 export default function TabelaContagem() {
   const [data, setData] = useState<Contagem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -53,7 +55,7 @@ export default function TabelaContagem() {
 
     try {
       const res = await fetch(
-        `https://ciclourb-backend.vercel.app/api/contagem?${params.toString()}`
+        `${API_ROUTE}/contagem?${params.toString()}`
       );
       const json = await res.json();
       setData(json.data ?? []);

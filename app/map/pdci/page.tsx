@@ -4,6 +4,8 @@ import { useEffect, useState, useMemo } from "react";
 import { MapView } from "@/components/mapComponents/map";
 import type { FeatureCollection, Geometry, GeoJsonProperties } from "geojson";
 
+const API_ROUTE = process.env.NEXT_PUBLIC_API_ROUTE || "https://ciclourb-backend.vercel.app/api";
+
 export default function MapPage() {
   const [malhas, setMalhas] = useState<any[]>([]);
   const [zonas30, setZonas30] = useState<any[]>([]);
@@ -22,9 +24,9 @@ export default function MapPage() {
     async function fetchData() {
       try {
         const [malhaRes, zonasRes, contRes] = await Promise.all([
-          fetch(`http://localhost:3001/malha-pdci`).then(res => res.json()),
-          fetch(`http://localhost:3001/zonas30`).then(res => res.json()),
-          fetch(`http://localhost:3001/contagem/contagens`).then(res => res.json()),
+          fetch(`${API_ROUTE}/malha-pdci`).then(res => res.json()),
+          fetch(`${API_ROUTE}/zonas30`).then(res => res.json()),
+          fetch(`${API_ROUTE}/contagem/contagens`).then(res => res.json()),
         ]);
 
         setMalhas(malhaRes);
