@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useMemo } from "react";
-import { MapView } from "@/components/map";
+import { MapView } from "@/components/mapComponents/map";
 import type { FeatureCollection, Geometry, GeoJsonProperties } from "geojson";
 
 export default function MapPage() {
@@ -22,9 +22,9 @@ export default function MapPage() {
     async function fetchData() {
       try {
         const [malhaRes, biciRes, contRes] = await Promise.all([
-          fetch(`https://ciclourb-backend.vercel.app/api/malha-atual`).then(res => res.json()),
-          fetch(`https://ciclourb-backend.vercel.app/api/bicicletar`).then(res => res.json()),
-          fetch(`https://ciclourb-backend.vercel.app/api/contagem/contagens`).then(res => res.json()),
+          fetch(`http://localhost:3001/malha-atual`).then(res => res.json()),
+          fetch(`http://localhost:3001/bicicletar`).then(res => res.json()),
+          fetch(`http://localhost:3001/contagem/contagens`).then(res => res.json()),
         ]);
 
         setMalhas(malhaRes);
