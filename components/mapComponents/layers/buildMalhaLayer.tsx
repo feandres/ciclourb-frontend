@@ -19,7 +19,7 @@ export function buildMalhaLayer(
     },
     {
       key: "ciclofaixa unidirecional",
-      label: "Ciclofaixa",
+      label: "Ciclofaixa unidirecional",
       color: "#34A6F4",
     },
     {
