@@ -18,6 +18,7 @@ export default function MapPage() {
     executado: "",
     ano: "",
     dentro_do_prazo: "",
+    contidoPdci: ""
   });
 
   useEffect(() => {
@@ -43,9 +44,11 @@ export default function MapPage() {
 
   const filteredMalhaGeoJSON = useMemo(() => {
     const filtered = malhas.filter(malha => {
+      console.log(filters.contidoPdci, malha.pdci, filters.contidoPdci === malha.pdci)
       return (
         (filters.tipologia ? malha.tipologia === filters.tipologia : true) &&
-        (filters.ano ? malha.ano == filters.ano : true)
+        (filters.ano ? malha.ano == filters.ano : true) && 
+        (filters.contidoPdci ? malha.pdci === filters.contidoPdci : true)
       );
     });
 

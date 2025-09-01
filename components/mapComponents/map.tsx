@@ -364,17 +364,30 @@ export function MapView({
                 <option value="2004">2004</option>
                 <option value="2000">2000</option>
               </select>
-              <select
-                className="p-2 m-2"
-                value={filters.executado}
-                onChange={(e) => setFilters({ ...filters, executado: e.target.value })}
-                >
-                <option value="" disabled>Selecione o status das vias</option>
-                <option value="">Malha completa</option>
-                <option value="Sim">Executado</option>
-                <option value="Parcial">Parcialmente executado</option>
-                <option value="Não">Não executado</option>
-              </select>
+              {!bicicletarData ? (
+                <select
+                  className="p-2 m-2"
+                  value={filters.executado}
+                  onChange={(e) => setFilters({ ...filters, executado: e.target.value })}
+                  >
+                  <option value="" disabled>Selecione o status das vias</option>
+                  <option value="">Malha completa</option>
+                  <option value="Sim">Executado</option>
+                  <option value="Parcial">Parcialmente executado</option>
+                  <option value="Não">Não executado</option>
+                </select>
+              ) : (
+                <select
+                  className="p-2 m-2"
+                  value={filters.contidoPdci}
+                  onChange={(e) => setFilters({ ...filters, contidoPdci: e.target.value })}
+                  >
+                  <option value="" disabled>Selecione o status das vias</option>
+                  <option value="">Todos</option>
+                  <option value="Sim">Contido ao pdci</option>
+                  <option value="Não">Não contido ao pdci</option>
+                </select>
+              )}
             </div>
             <div className="p-4 bg-gray-50/50 rounded-b-2xl">
               <div className="flex items-center gap-2 text-xs text-gray-500">
