@@ -18,7 +18,9 @@ type Item = {
   valor: number;
 };
 
-const API_ROUTE = process.env.NEXT_PUBLIC_API_ROUTE || "https://ciclourb-backend.vercel.app/api";
+const API_ROUTE =
+  process.env.NEXT_PUBLIC_API_ROUTE ||
+  "https://ciclourb-backend.vercel.app/api";
 
 export default function EvolucaoMalhaChart() {
   const [data, setData] = useState<any[]>([]);
@@ -26,8 +28,7 @@ export default function EvolucaoMalhaChart() {
   useEffect(() => {
     async function fetchData() {
       try {
-
-        const res = await fetch( `${API_ROUTE}/dados/evolucao-malha-tipologia`);
+        const res = await fetch(`${API_ROUTE}/dados/evolucao-malha-tipologia`);
         const json: Item[] = await res.json();
 
         const items = json.map((i) => ({
@@ -107,7 +108,11 @@ export default function EvolucaoMalhaChart() {
             verticalAlign="top"
             align="center"
             wrapperStyle={{ fontSize: "0.75rem", paddingBottom: "1rem" }}
+            formatter={(value) =>
+              value === "Ciclovia bidirecional" ? "Ciclovia" : value
+            }
           />
+
           <Line
             type="monotone"
             dataKey="Ciclovia bidirecional"
