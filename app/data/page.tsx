@@ -138,12 +138,12 @@ interface Indicadores {
   [key: string]: number;
 }
 
-const API_ROUTE = process.env.NEXT_PUBLIC_API_ROUTE || "https://ciclourb-backend.vercel.app/api";
+const API_ROUTE =
+  process.env.NEXT_PUBLIC_API_ROUTE ||
+  "https://ciclourb-backend.vercel.app/api";
 
 async function fetchIndicadoresREST(): Promise<Indicadores> {
-  const res = await fetch(
-    `${API_ROUTE}/dados/indicadores`
-  );
+  const res = await fetch(`${API_ROUTE}/dados/indicadores`);
   const indicadoresRaw = await res.json();
 
   const kmIndicadores: Record<string, number> = {};
@@ -566,18 +566,20 @@ export default function DataPage() {
               A{" "}
               <span className="font-bold text-[#4D3A08]">
                 Pesquisa Perfil do Ciclista
-              </span>{" "}
+              </span>
               , realizada pela Transporte Ativo, pelo Laboratório de Mobilidade
               Sustentável (LabMob/UFRJ) e pelo Observatório das Metrópoles, e
               aplicada em Fortaleza pela Prefeitura Municipal, tem como
-              propósito principal a execução de um levantamento de campo
-              destinado a identificar motivações, hábitos de deslocamento e
+              principal objetivo realizar um levantamento de campo destinado a
+              identificar as motivações, hábitos de deslocamento e
               características sociodemográficas dos ciclistas no contexto
-              urbano. Os dados obtidos e analisados configuram-se como insumos
-              fundamentais para orientar a formulação de políticas públicas e
-              demais iniciativas relacionadas ao tema, favorecendo a promoção do
-              transporte cicloviário na cidade com base em evidências e
-              informações qualificadas.
+              urbano.
+              <br />
+              <br />
+              Os dados obtidos e analisados constituem insumos fundamentais para
+              orientar a formulação de políticas públicas e outras iniciativas
+              relacionadas ao tema, promovendo o transporte cicloviário na
+              cidade com base em evidências e informações qualificadas.
             </p>
           </div>
         </div>
