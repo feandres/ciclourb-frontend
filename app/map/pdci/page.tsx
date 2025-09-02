@@ -8,6 +8,7 @@ const API_ROUTE = process.env.NEXT_PUBLIC_API_ROUTE || "https://ciclourb-backend
 
 export default function MapPage() {
   const [malhas, setMalhas] = useState<any[]>([]);
+  const [malhaExistente, setMalhaExistente] = useState<any[]>([]);
   const [zonas30, setZonas30] = useState<any[]>([]);
   const [contagens, setContagens] = useState<FeatureCollection<Geometry, GeoJsonProperties> | undefined>(undefined);
 
@@ -23,15 +24,17 @@ export default function MapPage() {
   useEffect(() => {
     async function fetchData() {
       try {
-        const [malhaRes, zonasRes, contRes] = await Promise.all([
+        const [malhaRes, zonasRes, contRes, existRes] = await Promise.all([
           fetch(`${API_ROUTE}/malha-pdci`).then(res => res.json()),
           fetch(`${API_ROUTE}/zonas30`).then(res => res.json()),
           fetch(`${API_ROUTE}/contagem/contagens`).then(res => res.json()),
+          fetch(`${API_ROUTE}/malha-comparativa/malha-existente`).then(res => res.json())
         ]);
 
         setMalhas(malhaRes);
         setZonas30(zonasRes);
         setContagens(contRes); 
+        setMalhaExistente(existRes);
 
       } catch (error) {
         console.error("Erro ao buscar dados da API REST:", error);
@@ -77,6 +80,26 @@ export default function MapPage() {
     };
   }, [malhas, filters]);
 
+  const filteredMalhaExistenteGeoJSON = useMemo(() => {
+
+    return {
+      type: "FeatureCollection" as const,
+      features: malhaExistente.map(malha => ({
+        type: "Feature" as const,
+        properties: {
+          id: malha.id,
+          via: malha.via,
+          pdci: malha.pdci,
+          tipologia: malha.tipologia,
+          ano: malha.ano,
+          extensao: malha.extensao,
+          status: malha.status,
+        },
+        geometry: malha.geom,
+      })),
+    };
+  }, [malhas, filters]);
+
   const filteresZonas30GeoJSON = useMemo(() => ({
     type: "FeatureCollection" as const,
     features: zonas30.map(zona30 => ({
@@ -96,6 +119,7 @@ export default function MapPage() {
         malhaData={filteredMalhaGeoJSON} 
         zonas30Data={filteresZonas30GeoJSON}
         contagensData={contagens}
+        malhaExistenteData={filteredMalhaExistenteGeoJSON}
         filters={setFilters}
         setFilters={setFilters}
       />

@@ -44,7 +44,6 @@ export default function MapPage() {
 
   const filteredMalhaGeoJSON = useMemo(() => {
     const filtered = malhas.filter(malha => {
-      console.log(filters.contidoPdci, malha.pdci, filters.contidoPdci === malha.pdci)
       return (
         (filters.tipologia ? malha.tipologia === filters.tipologia : true) &&
         (filters.ano ? malha.ano == filters.ano : true) && 

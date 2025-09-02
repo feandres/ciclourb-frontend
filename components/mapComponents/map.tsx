@@ -8,12 +8,14 @@ import { buildMalhaLayer } from "./layers/buildMalhaLayer";
 import { buildZonas30Layer } from "./layers/buildZonas30Layer";
 import { buildContagemLayer } from "./layers/buildContagemLayer";
 import { buildBicicletarLayer } from "./layers/buildBicicletarLayer";
+import { buildMalhaExistenteLayer } from "./layers/buildMalhaExistenteLayer";
 
 interface Props {
   malhaData: FeatureCollection<Geometry, GeoJsonProperties>;
   zonas30Data?: FeatureCollection<Geometry, GeoJsonProperties>;
   bicicletarData?: FeatureCollection<Geometry, GeoJsonProperties> | undefined;
   contagensData?: FeatureCollection<Geometry, GeoJsonProperties>;
+  malhaExistenteData?: any;
   filters: any;
   setFilters: any;
 }
@@ -23,6 +25,7 @@ export function MapView({
   zonas30Data,
   bicicletarData,
   contagensData,
+  malhaExistenteData,
   filters,
   setFilters
 }: Props) {
@@ -32,6 +35,7 @@ export function MapView({
   const [baseLayer, setBaseLayer] = useState<"raster" | "vector">("vector");
   const [mapLoaded, setMapLoaded] = useState(false);
   const [panelExpanded, setPanelExpanded] = useState(true);
+  const [isMalhaExistente, setIsMalhaExistente] = useState("Não");
 
   const [layersVisibility, setLayersVisibility] = useState({
     "ciclofaixa": true,
@@ -140,7 +144,11 @@ export function MapView({
         layout: { visibility: baseLayer === "vector" ? "visible" : "none" },
       });
 
-      buildMalhaLayer(map, mapRef, malhaData);
+      if (isMalhaExistente === "Não") {
+        buildMalhaLayer(map, mapRef, malhaData);
+      } else {
+        buildMalhaExistenteLayer(map, mapRef, malhaExistenteData);
+      }
 
       if (contagensData) {
         buildContagemLayer(map, mapRef, contagensData);
@@ -160,7 +168,7 @@ export function MapView({
       mapRef.current = null;
       setMapLoaded(false);
     };
-  }, [malhaData, zonas30Data, bicicletarData]);
+  }, [malhaData, zonas30Data, bicicletarData, isMalhaExistente]);
 
   useEffect(() => {
     if (!mapRef.current || !mapLoaded) return;
@@ -386,6 +394,16 @@ export function MapView({
                   <option value="">Todos</option>
                   <option value="Sim">Contido ao pdci</option>
                   <option value="Não">Não contido ao pdci</option>
+                </select>
+              )}
+              {malhaExistenteData && (
+                <select
+                  className="p-2 m-2"
+                  value={isMalhaExistente}
+                  onChange={(e) => setIsMalhaExistente(e.target.value)}
+                  >
+                  <option value="Não" defaultChecked>Malha pdci</option>
+                  <option value="Sim">Malha anterior à pdci</option>
                 </select>
               )}
             </div>
