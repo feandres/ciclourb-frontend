@@ -191,7 +191,7 @@ export function Navbar() {
               <div className="bg-white/60 backdrop-blur-sm rounded-xl p-6 border border-[#d6c9a3]/30 text-center">
                 <img
                   src={
-                    isDesafioIntermodal ? "/logo-alt-azul.png" : "/logo.png"
+                    isDesafioIntermodal ? "/logo_alt_azul.png" : "/logo.png"
                   }
                   alt="Ciclourb Logo"
                   className="h-12 w-auto mx-auto mb-3"
