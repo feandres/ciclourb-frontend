@@ -1,17 +1,17 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { usePathname } from "next/navigation";
+import { ChevronUp } from "lucide-react";
 
 export default function ScrollToTopButton() {
   const [isVisible, setIsVisible] = useState(false);
+  const pathname = usePathname();
+  const isDesafioIntermodal = pathname === "/desafio-intermodal";
 
   useEffect(() => {
     const toggleVisibility = () => {
-      if (window.scrollY > 200) {
-        setIsVisible(true);
-      } else {
-        setIsVisible(false);
-      }
+      setIsVisible(window.scrollY > 200);
     };
 
     window.addEventListener("scroll", toggleVisibility);
@@ -27,22 +27,14 @@ export default function ScrollToTopButton() {
       {isVisible && (
         <button
           onClick={scrollToTop}
-          style={{
-            position: "fixed",
-            bottom: "2rem",
-            right: "2rem",
-            backgroundColor: "#4D3A08",
-            color: "#FFF8E5",
-            border: "none",
-            borderRadius: "50%",
-            width: "3rem",
-            height: "3rem",
-            cursor: "pointer",
-            boxShadow: "0 2px 6px rgba(0,0,0,0.3)",
-            zIndex: 1000,
-          }}
+          className={`fixed bottom-8 right-8 z-50 flex items-center justify-center w-14 h-14 rounded-full shadow-lg transition-all duration-300 hover:scale-110 hover:shadow-xl ${
+            isDesafioIntermodal
+              ? "bg-[#244A6B] text-[#FFF8E5] hover:bg-[#728A9A]"
+              : "bg-[#4D3A08] text-[#FFF8E5] hover:bg-[#79693F]"
+          }`}
         >
-          ↑
+          <ChevronUp className="w-6 h-6" />
+          <span className="sr-only">Voltar ao topo</span>
         </button>
       )}
     </>
