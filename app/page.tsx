@@ -21,7 +21,7 @@ export default function HomePage() {
         },
         {
           icone: <FaAddressCard />,
-          url: "https://lattes.cnpq.br/3827859681608797",
+          url: "http://lattes.cnpq.br/3871055698784696",
         },
       ],
     },
