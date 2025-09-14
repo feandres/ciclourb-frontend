@@ -3,6 +3,7 @@ import { FeatureCollection, GeoJsonProperties, Geometry } from "geojson";
 import maplibregl, { Map } from "maplibre-gl";
 import { createRoot } from "react-dom/client";
 import ContagemPopup from "../popUpsComponents/contagemPopup";
+import api from "@/services/api";
 
 export function buildContagemLayer(
   map: Map, 
@@ -29,11 +30,18 @@ export function buildContagemLayer(
     mapRef.current.getCanvas().style.cursor = "";
   });
 
-  map.on("click", "contagem", (e) => {
+  map.on("click", "contagem", async (e) => {
     if (!e.features) return;
-    const props = e.features[0].properties;
+    const point = e.features[0].properties.geom;
+
+    const response = await api.get(`http://localhost:3001/contagem/byPontoContagem`, {
+      params: {
+        point: point
+      }
+    });
+
     const popupNode = document.createElement("div");
-    createRoot(popupNode).render(<ContagemPopup props={props} />);
+    createRoot(popupNode).render(<ContagemPopup contagens={response.data.features} />);
     new maplibregl.Popup({
       closeOnClick: true,
       closeButton: true,

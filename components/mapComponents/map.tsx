@@ -351,7 +351,6 @@ export function MapView({
                 >
                 <option value="" disabled>Selecione um ano</option>
                 <option value="">Todos os anos</option>
-                <option value="no_date">Sem data definida</option>
                 <option value="2025">2025</option>
                 <option value="2024">2024</option>
                 <option value="2023">2023</option>

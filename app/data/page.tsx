@@ -19,6 +19,7 @@ import {
 } from "recharts";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import api from "@/services/api";
 
 const COLORS = [
   "#4D3A08",
@@ -138,13 +139,9 @@ interface Indicadores {
   [key: string]: number;
 }
 
-const API_ROUTE =
-  process.env.NEXT_PUBLIC_API_ROUTE ||
-  "https://ciclourb-backend.vercel.app/api";
-
 async function fetchIndicadoresREST(): Promise<Indicadores> {
-  const res = await fetch(`${API_ROUTE}/dados/indicadores`);
-  const indicadoresRaw = await res.json();
+  const res = await api.get(`/dados/indicadores`);
+  const indicadoresRaw = await res.data;
 
   const kmIndicadores: Record<string, number> = {};
   indicadoresRaw.forEach(({ nome, valor, unidade }: any) => {

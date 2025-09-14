@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Input } from "@/components/ui/input"; // precisa existir no shadcn
+import api from "@/services/api";
 
 type Contagem = {
   local: string;
@@ -21,8 +22,6 @@ type Contagem = {
   ciclistas_por_min: string;
   geom: string;
 };
-
-const API_ROUTE = process.env.NEXT_PUBLIC_API_ROUTE || "https://ciclourb-backend.vercel.app/api";
 
 export default function TabelaContagem() {
   const [data, setData] = useState<Contagem[]>([]);
@@ -54,10 +53,10 @@ export default function TabelaContagem() {
     if (search) params.append("search", search);
 
     try {
-      const res = await fetch(
-        `${API_ROUTE}/contagem?${params.toString()}`
+      const res = await api.get(
+        `/contagem?${params.toString()}`
       );
-      const json = await res.json();
+      const json = await res.data;
       setData(json.data ?? []);
       setTotal(json.total ?? 0);
     } catch (error) {

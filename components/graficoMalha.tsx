@@ -1,5 +1,6 @@
 "use client";
 
+import api from "@/services/api";
 import { useEffect, useState } from "react";
 import {
   LineChart,
@@ -18,18 +19,14 @@ type Item = {
   valor: number;
 };
 
-const API_ROUTE =
-  process.env.NEXT_PUBLIC_API_ROUTE ||
-  "https://ciclourb-backend.vercel.app/api";
-
 export default function EvolucaoMalhaChart() {
   const [data, setData] = useState<any[]>([]);
 
   useEffect(() => {
     async function fetchData() {
       try {
-        const res = await fetch(`${API_ROUTE}/dados/evolucao-malha-tipologia`);
-        const json: Item[] = await res.json();
+        const res = await api.get(`/dados/evolucao-malha-tipologia`);
+        const json: Item[] = await res.data;
 
         const items = json.map((i) => ({
           ano: i.ano,
