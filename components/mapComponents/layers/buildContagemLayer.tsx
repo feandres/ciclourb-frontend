@@ -34,7 +34,7 @@ export function buildContagemLayer(
     if (!e.features) return;
     const point = e.features[0].properties.geom;
 
-    const response = await api.get(`http://localhost:3001/contagem/byPontoContagem`, {
+    const response = await api.get(`/contagem/byPontoContagem`, {
       params: {
         point: point
       }
