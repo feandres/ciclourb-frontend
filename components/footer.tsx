@@ -1,14 +1,40 @@
+"use client";
+
 import { FaInstagram, FaEnvelope, FaMapMarkerAlt } from "react-icons/fa";
+import { usePathname } from "next/navigation";
 
 export function Footer() {
+  const pathname = usePathname();
+  const isDesafioIntermodal = pathname === "/desafio-intermodal";
+
   return (
-    <footer className="bg-gradient-to-r from-[#4D3A08] via-[#403500] to-[#4D3A08] text-[#FFF8E5] border-t-2 border-[#79693F]/30">
+    <footer
+      className={
+        isDesafioIntermodal
+          ? "bg-gradient-to-r from-[#244A6B] via-[#244A6B] to-[#244A6B] text-[#FFF8E5] border-t-2 border-[#728A9A]/40"
+          : "bg-gradient-to-r from-[#4D3A08] via-[#403500] to-[#4D3A08] text-[#FFF8E5] border-t-2 border-[#79693F]/30"
+      }
+    >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-12 sm:py-16">
         <div className="flex flex-col md:flex-row md:justify-between gap-8 sm:gap-12">
           <div className="space-y-4">
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 bg-gradient-to-br from-[#79693F] to-[#FFF8E5] rounded-full flex items-center justify-center shadow-lg">
-                <span className="text-[#4D3A08] font-bold text-lg">C</span>
+              <div
+                className={
+                  isDesafioIntermodal
+                    ? "w-12 h-12 bg-gradient-to-br from-[#728A9A] to-[#244A6B] rounded-full flex items-center justify-center shadow-lg"
+                    : "w-12 h-12 bg-gradient-to-br from-[#79693F] to-[#FFF8E5] rounded-full flex items-center justify-center shadow-lg"
+                }
+              >
+                <span
+                  className={
+                    isDesafioIntermodal
+                      ? "text-white font-bold text-lg"
+                      : "text-[#4D3A08] font-bold text-lg"
+                  }
+                >
+                  C
+                </span>
               </div>
               <h3 className="text-xl font-bold text-white">Ciclourb</h3>
             </div>
@@ -16,8 +42,18 @@ export function Footer() {
               Organização da Sociedade Civil promovendo mobilidade sustentável,
               planejamento urbano e políticas públicas integradas em Fortaleza.
             </p>
-            <div className="flex items-center gap-2 text-[#FFF8E5]/70 text-sm">
-              <FaMapMarkerAlt className="text-[#79693F]" />
+            <div
+              className={`flex items-center gap-2 text-sm ${
+                isDesafioIntermodal
+                  ? "text-[#FFF8E5]/70"
+                  : "text-[#FFF8E5]/70"
+              }`}
+            >
+              <FaMapMarkerAlt
+                className={
+                  isDesafioIntermodal ? "text-[#728A9A]" : "text-[#79693F]"
+                }
+              />
               <span>Fortaleza, Ceará - Brasil</span>
             </div>
           </div>
@@ -27,10 +63,26 @@ export function Footer() {
             <div className="space-y-3">
               <a
                 href="mailto:contato@ciclourb.org"
-                className="flex items-center gap-3 text-[#FFF8E5]/80 hover:text-white transition-colors duration-200 text-sm group"
+                className={`flex items-center gap-3 transition-colors duration-200 text-sm group ${
+                  isDesafioIntermodal
+                    ? "text-[#FFF8E5]/80 hover:text-white"
+                    : "text-[#FFF8E5]/80 hover:text-white"
+                }`}
               >
-                <div className="w-8 h-8 bg-[#79693F]/20 rounded-full flex items-center justify-center group-hover:bg-[#79693F]/30 transition-colors">
-                  <FaEnvelope className="text-[#79693F] text-sm" />
+                <div
+                  className={`w-8 h-8 rounded-full flex items-center justify-center transition-colors ${
+                    isDesafioIntermodal
+                      ? "bg-[#728A9A]/20 group-hover:bg-[#728A9A]/30"
+                      : "bg-[#79693F]/20 group-hover:bg-[#79693F]/30"
+                  }`}
+                >
+                  <FaEnvelope
+                    className={
+                      isDesafioIntermodal
+                        ? "text-[#728A9A] text-sm"
+                        : "text-[#79693F] text-sm"
+                    }
+                  />
                 </div>
                 <span>ciclourbfortaleza@gmail.com</span>
               </a>
@@ -38,10 +90,26 @@ export function Footer() {
                 href="https://www.instagram.com/ciclourb/"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-3 text-[#FFF8E5]/80 hover:text-white transition-colors duration-200 text-sm group"
+                className={`flex items-center gap-3 transition-colors duration-200 text-sm group ${
+                  isDesafioIntermodal
+                    ? "text-[#FFF8E5]/80 hover:text-white"
+                    : "text-[#FFF8E5]/80 hover:text-white"
+                }`}
               >
-                <div className="w-8 h-8 bg-[#79693F]/20 rounded-full flex items-center justify-center group-hover:bg-[#79693F]/30 transition-colors">
-                  <FaInstagram className="text-[#79693F] text-sm" />
+                <div
+                  className={`w-8 h-8 rounded-full flex items-center justify-center transition-colors ${
+                    isDesafioIntermodal
+                      ? "bg-[#728A9A]/20 group-hover:bg-[#728A9A]/30"
+                      : "bg-[#79693F]/20 group-hover:bg-[#79693F]/30"
+                  }`}
+                >
+                  <FaInstagram
+                    className={
+                      isDesafioIntermodal
+                        ? "text-[#728A9A] text-sm"
+                        : "text-[#79693F] text-sm"
+                    }
+                  />
                 </div>
                 <span>@ciclourb</span>
               </a>
