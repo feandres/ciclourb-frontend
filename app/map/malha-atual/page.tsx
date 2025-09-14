@@ -9,6 +9,7 @@ export default function MapPage() {
   const [malhas, setMalhas] = useState<any[]>([]);
   const [bicicletares, setBicicletares] = useState<FeatureCollection<Geometry, GeoJsonProperties> | null>(null);
   const [contagens, setContagens] = useState<FeatureCollection<Geometry, GeoJsonProperties> | undefined>(undefined);
+  const [loadingContagens, setLoadingContagens] = useState(false);
 
   const [filters, setFilters] = useState({
     tipologia: "",
@@ -40,6 +41,26 @@ export default function MapPage() {
 
     fetchData();
   }, []);
+
+  useEffect(() => {
+    const filterContagens = async () => {
+      setLoadingContagens(true);
+      try {
+        const response = await api.get(
+          filters.ano ? "pontos-contagem/findAllByYear" : "pontos-contagem",
+          { params: filters.ano ? { ano: filters.ano } : {} }
+        );
+        setContagens({
+          type: response.data.type,
+          features: response.data.features ? response.data.features : []
+        });
+      } finally {
+        setLoadingContagens(false);
+      }
+    }
+
+    filterContagens();
+  }, [filters.ano]);
 
   const filteredMalhaGeoJSON = useMemo(() => {
     const filtered = malhas.filter(malha => {
@@ -89,31 +110,19 @@ export default function MapPage() {
     };
   }, [bicicletares, filters]);
 
-  const filteredContagens = useMemo(() => {
-    if (!contagens) return undefined;
-
-    const filtered = contagens.features.filter(contagem => {
-      return (
-        (filters.ano ? contagem?.properties?.ano == filters.ano : true)
-      )
-    });
-
-    return {
-      type: "FeatureCollection" as const,
-      features: filtered
-    };
-  }, [contagens, filters])
-
   return (
     <div className="w-full h-full">
-      {bicicletares && (
+      {bicicletares && ( loadingContagens ? (
+        <p>Carregando</p>
+      ) : (
         <MapView 
           malhaData={filteredMalhaGeoJSON} 
           bicicletarData={filteredBicicletares} 
-          contagensData={filteredContagens}
+          contagensData={contagens}
           filters={filters}
           setFilters={setFilters}
         />
+      )
       )}
     </div>
   );

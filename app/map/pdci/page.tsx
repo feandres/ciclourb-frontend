@@ -10,6 +10,7 @@ export default function MapPage() {
   const [malhaExistente, setMalhaExistente] = useState<any[]>([]);
   const [zonas30, setZonas30] = useState<any[]>([]);
   const [contagens, setContagens] = useState<FeatureCollection<Geometry, GeoJsonProperties> | undefined>(undefined);
+  const [loadingContagens, setLoadingContagens] = useState(false);
 
   const [filters, setFilters] = useState({
     tipologia: "",
@@ -42,6 +43,26 @@ export default function MapPage() {
 
     fetchData();
   }, []);
+
+  useEffect(() => {
+    const filterContagens = async () => {
+      setLoadingContagens(true);
+      try {
+        const response = await api.get(
+          filters.ano ? "pontos-contagem/findAllByYear" : "pontos-contagem",
+          { params: filters.ano ? { ano: filters.ano } : {} }
+        );
+        setContagens({
+          type: response.data.type,
+          features: response.data.features ? response.data.features : []
+        });
+      } finally {
+        setLoadingContagens(false);
+      }
+    }
+
+    filterContagens();
+  }, [filters.ano]);
 
   const filteredMalhaGeoJSON = useMemo(() => {
     const filtered = malhas.filter(malha => {
@@ -114,14 +135,19 @@ export default function MapPage() {
 
   return (
     <div className="w-full h-full">
-      <MapView 
-        malhaData={filteredMalhaGeoJSON} 
-        zonas30Data={filteresZonas30GeoJSON}
-        contagensData={contagens}
-        malhaExistenteData={filteredMalhaExistenteGeoJSON}
-        filters={setFilters}
-        setFilters={setFilters}
-      />
+      {loadingContagens ? (
+        <p>Carregando</p>
+      ) : (
+        <MapView 
+          malhaData={filteredMalhaGeoJSON} 
+          zonas30Data={filteresZonas30GeoJSON}
+          contagensData={contagens}
+          malhaExistenteData={filteredMalhaExistenteGeoJSON}
+          filters={setFilters}
+          setFilters={setFilters}
+        />
+      )
+      }
     </div>
   );
 }

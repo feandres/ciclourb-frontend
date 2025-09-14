@@ -8,7 +8,7 @@ import api from "@/services/api";
 export function buildContagemLayer(
   map: Map, 
   mapRef: any,
-  contagensData: FeatureCollection<Geometry, GeoJsonProperties>
+  contagensData: FeatureCollection<Geometry, GeoJsonProperties> | null
 ) {
   map.addSource("contagem", {
     type: "geojson",
