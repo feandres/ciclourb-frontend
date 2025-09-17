@@ -269,11 +269,10 @@ const Page = () => {
               Inscrição
             </h3>
             <a
-              href="https://docs.google.com/forms/d/e/1FAIpQLSer3O48acecgJMuYFnPNaCMtju0d-ei7kj1RLbduZwoTnD9MQ/viewform?usp=header"
               className="inline-block text-lg font-medium underline hover:no-underline transition-all"
               style={{ color: "#244A6B" }}
             >
-              link para o formulário
+              Inscrições encerradas
             </a>
           </div>
         </div>
