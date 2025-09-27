@@ -1,5 +1,8 @@
 import React from "react";
 import { Download } from "lucide-react";
+import DesafioIntermodalImage from "../../public/desafio-intermodal-image.jpeg";
+import Link from "next/link";
+
 
 const Page = () => {
   const timelineData = [
@@ -245,6 +248,24 @@ const Page = () => {
       </section>
       <section className="py-8 px-4">
         <div className="max-w-4xl mx-auto text-center space-y-8">
+
+          <div>
+            <h3
+              className="text-2xl font-bold mb-4"
+              style={{ color: "#244A6B" }}
+            >
+              Relatório
+            </h3>
+            <a
+              href="/desafio-intermodal/docs/Relatório Desafio Intermodal 2025 - Fortaleza_CE.pdf"
+              className="inline-block text-lg font-medium underline hover:no-underline transition-all"
+              style={{ color: "#244A6B" }}
+              target="_blank"
+            >
+              link para download
+            </a>
+          </div>
+
           <div>
             <h3
               className="text-2xl font-bold mb-4"
@@ -256,6 +277,7 @@ const Page = () => {
               href="/desafio-intermodal/docs/Desafio Intermodal 2025 - Fortaleza_CE_DOC.pdf"
               className="inline-block text-lg font-medium underline hover:no-underline transition-all"
               style={{ color: "#244A6B" }}
+              target="_blank"
             >
               link para download
             </a>
@@ -268,12 +290,12 @@ const Page = () => {
             >
               Inscrição
             </h3>
-            <a
-              className="inline-block text-lg font-medium underline hover:no-underline transition-all"
+            <p
+              className="inline-block text-lg font-medium transition-all"
               style={{ color: "#244A6B" }}
             >
-              Inscrições encerradas
-            </a>
+              Inscrições encerradas!
+            </p>
           </div>
         </div>
       </section>
@@ -295,56 +317,49 @@ const Page = () => {
 
             <div className="flex justify-between items-start min-w-full gap-4 pb-4">
               {timelineData.map((item) => (
-                <div
-                  key={item.year}
-                  className="flex flex-col items-center relative flex-shrink-0"
-                  style={{ minWidth: "140px" }}
-                >
+                <Link href={item.downloadLink} key={item.year} target="_blank">
                   <div
-                    className="w-4 h-4 rounded-full border-2 border-white shadow-lg z-10 mb-4"
-                    style={{ backgroundColor: "#244A6B" }}
-                  ></div>
+                    className="flex flex-col items-center relative flex-shrink-0"
+                    style={{ minWidth: "140px" }}
+                    >
+                    <div
+                      className="w-4 h-4 rounded-full border-2 border-white shadow-lg z-10 mb-4"
+                      style={{ backgroundColor: "#244A6B" }}
+                      ></div>
 
-                  <div
-                    className="text-xl font-bold mb-4 whitespace-nowrap"
-                    style={{ color: "#244A6B" }}
-                  >
-                    {item.year}
-                  </div>
+                    <div
+                      className="text-xl font-bold mb-4 whitespace-nowrap"
+                      style={{ color: "#244A6B" }}
+                      >
+                      {item.year}
+                    </div>
 
-                  <div className="relative group mb-4">
-                    <div className="w-24 h-32 bg-white border border-gray-200 rounded shadow-lg hover:shadow-xl transition-shadow cursor-pointer overflow-hidden">
-                      <iframe
-                        src={`${item.image}#page=1&toolbar=0&navpanes=0&scrollbar=0`}
-                        className="w-full h-full pointer-events-none"
-                        style={{
-                          transform: "scale(0.25)",
-                          transformOrigin: "top left",
-                          width: "400%",
-                          height: "400%",
-                        }}
-                      />
-                      <div className="absolute inset-0 bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                        <Download className="w-6 h-6 text-white" />
+                    <div className="relative group mb-4">
+                      <div className="w-24 h-32 bg-white border border-gray-200 rounded shadow-lg hover:shadow-xl transition-shadow cursor-pointer overflow-hidden">
+                        <iframe
+                          src={`${item.image}#page=1&toolbar=0&navpanes=0&scrollbar=0`}
+                          className="w-full h-full pointer-events-none"
+                          style={{
+                            transform: "scale(0.25)",
+                            transformOrigin: "top left",
+                            width: "400%",
+                            height: "400%",
+                          }}
+                        />
+                        <div className="absolute inset-0 bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                          <Download className="w-6 h-6 text-white" />
+                        </div>
                       </div>
                     </div>
                   </div>
-
-                  <a
-                    href={item.downloadLink}
-                    className="text-xs font-medium underline hover:no-underline transition-all text-center"
-                    style={{ color: "#244A6B" }}
-                  >
-                    download
-                  </a>
-                </div>
+                </Link>
               ))}
             </div>
           </div>
-        </div>
-      </section>
-
-      <section className="w-full" style={{ backgroundColor: "#54728C" }}>
+          </div>
+          </section>
+          
+          <section className="w-full" style={{ backgroundColor: "#54728C" }}>
         <div className="max-w-7xl mx-auto px-4 py-16">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-light text-white">
